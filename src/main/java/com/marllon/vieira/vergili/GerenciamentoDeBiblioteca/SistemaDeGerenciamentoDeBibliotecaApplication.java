@@ -1,22 +1,14 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca;
 
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor;
-
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Livro;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.legacyrepository.RepositoryDAO;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.repositoryInterfaces.AutorRepository;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.repositoryInterfaces.LivroRepository;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 
 @SpringBootApplication
-public class SistemaDeGerenciamentoDeBibliotecaApplication {
+public class MainApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SistemaDeGerenciamentoDeBibliotecaApplication.class, args);
+        SpringApplication.run(MainApplication.class, args);
     }
 
 
