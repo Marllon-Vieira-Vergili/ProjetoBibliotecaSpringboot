@@ -1,17 +1,16 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities;
-
-
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.beans.factory.annotation.Value;
-
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "autor")
@@ -29,7 +28,8 @@ public class Autor implements Serializable {
 
     @NotNull
     @Size(min = 5, max = 50)
-    @Email
+    @Email(message = "Tipo de email inválido!")
+    @NotBlank(message = "O email não pode estar vazio!")
     @Column(name = "email")
     private String email;
 
@@ -43,10 +43,12 @@ public class Autor implements Serializable {
     @Column(name = "cidade")
     private String cidade;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "autor", cascade ={CascadeType.DETACH, CascadeType.MERGE,
+
+    //um autor pode ter muitos livros
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "autor", cascade ={CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.REMOVE})
     @JsonManagedReference
-    private List<Livro> livros;
+    private List<Livro> livros = new ArrayList<>();
 
 
     public Autor() {
@@ -99,9 +101,12 @@ public class Autor implements Serializable {
         this.cidade = cidade;
     }
 
+
+
+    //private List<Livro> livrosTemp = new ArrayList<>();
     public List<Livro> getLivros() {
         if (livros.isEmpty()){
-            return null;
+            return livros;
 
         }
         return livros;
@@ -109,6 +114,20 @@ public class Autor implements Serializable {
 
     public void setLivros(List<Livro> livros) {
         this.livros = livros;
+    }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Autor autor)) return false;
+        return id == autor.id;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @Override

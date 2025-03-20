@@ -22,28 +22,41 @@ public class AutorController {
 
 
 
-    @GetMapping(value = "/mostrarTodosAutores")
+    @GetMapping(value = "/mostrartodosautores")
     public List<Autor> mostrarTodosAutores(){
         return autorService.findAllAutor();
     }
 
 
-    @GetMapping(value = "/mostrarAutor/{id}")
+    @GetMapping(value = "/mostrarautor/{id}")
     public Optional<Autor> mostrarAutor(@PathVariable Integer id){
         return autorService.findAutorById(id);
     }
 
-    @PostMapping(value = "/adicionarAutor")
+
+    @GetMapping(value = "/mostrarautorporemail/{email}")
+    public Optional<Autor> mostrarAutorPorEmail(@PathVariable String email){
+        return autorService.findAutorByEmail(email);
+    }
+
+
+
+
+
+
+    @PostMapping(value = "/adicionarautor")
     public void adicionarAutor(@RequestBody Autor autor){
         autorService.saveAutor(autor);
     }
 
-    @PutMapping(value = "/atualizarAutor/{id}")
+
+
+    @PutMapping(value = "/atualizarautor/{id}")
     public void atualizarAutor(@PathVariable Integer id, @RequestBody Autor autor){
         autorService.updateAutor(id, autor);
     }
 
-    @DeleteMapping(value = "/DeletarAutor/{id}")
+    @DeleteMapping(value = "/deletarautor/{id}")
     public void removerAutor(@PathVariable Integer id){
         autorService.deleteAutor(id);
     }

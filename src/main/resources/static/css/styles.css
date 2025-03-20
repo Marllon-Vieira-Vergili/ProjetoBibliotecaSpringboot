@@ -1,0 +1,7 @@
+body {
+    background-image: url('/image/biblioteca.png'); /* Caminho da imagem */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
