@@ -20,7 +20,7 @@ LÒGICAS MAIS COMPLEXAS E TRATADAS DEVEM SER REALIZADAS NO SERVICE
 public class EmprestimoRepositoryImplementation implements Serializable {
 
 
-    private EmprestimoRepository emprestimoRepository;
+    private final EmprestimoRepository emprestimoRepository;
 
     @Autowired
     public EmprestimoRepositoryImplementation(EmprestimoRepository emprestimoRepository){

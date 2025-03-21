@@ -1,5 +1,6 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services;
 
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.dto.CategoriaDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.*;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.CategoriaRepositoryImplement;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.LivroRepositoryImplementation;
@@ -7,16 +8,20 @@ import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.reposit
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repository.CategoriaRepository;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repository.LivroRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 
@@ -42,55 +47,46 @@ public class CategoriaService implements Serializable {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     public CategoriaService(CategoriaRepositoryImplement categoriaRepositoryImplement){
         this.categoriaRepositoryImplement = categoriaRepositoryImplement;
     }
 
 
+    //Método funcionando
+    public void saveCategoria(CategoriaDTO categoria) {
 
-    public void saveCategoria(Categoria categoria) {
+        //Verificar se o usuário não irá digitar um espaço em branco na categoria, ou não irá digitá-la,etc
 
-        //Verificar se os dados digitados não estão vazios
-        if (categoria.getNomeCategoria() == null || categoria.getNomeCategoria().isEmpty() || categoria.getNomeCategoria().isBlank()) {
-            throw new IllegalArgumentException("O nome da categoria não pode ficar em branco ou vazio!");
-        }
-        //Verificar se a categoria que será salvo já não existe no banco
-        Optional<Categoria> categoriaExistente = categoriaRepositoryImplement.findCategoriaByNome(categoria.getNomeCategoria());
-        if (categoriaExistente.isPresent()) {
-            throw new IllegalArgumentException("Não é possível adicionar essa categoria, pois ele ja está no banco de dados!");
-        }
+        if(categoria.getNomeCategoria() == null || categoria.getNomeCategoria().isBlank()){
+            throw new IllegalArgumentException("Por favor, escreva uma categoria!");
 
-
-        //Se a categoria não for informado, será criado uma nova categoria
-        if (categoria.getNomeCategoria() == null) {
-            throw new NullPointerException("A categoria não pode ser nula!");
+            }
+        //verificar se não será passado outro tipo de caracter, a não ser string
+        if (!categoria.getNomeCategoria().matches("[a-zA-Z]+")){//se o nome que eu pegar do parametro não condizer com a ordem alfabética de A-Z
+            throw new IllegalArgumentException("Categoria só aceita caracteres! e não aceita acentos, nem espaços");
         }
 
 
-        //Verificar se a categoria existe no banco de dados
-        Optional<Categoria> categoriaExistenteBanco = categoriaRepositoryImplement.findCategoriaById(categoria.getId());
-        /*
-        if (categoriaExistenteBanco.isEmpty()) {
-            throw new IllegalArgumentException("A categoria informada não existe no banco de dados!");
+        //Verificar se a categoria já existe no banco
+            Optional<Categoria> categoriaExiste = categoriaRepositoryImplement.findCategoriaByNome(categoria.getNomeCategoria());
+        if(categoriaExiste.isPresent()){
+            throw new IllegalArgumentException("Categoria já existe!");
         }
 
-         */
+        //convertendo DTO para entidade e salvando
+        Categoria categoriaEntity = modelMapper.map(categoria, Categoria.class);
+        categoriaRepositoryImplement.saveCategoria(categoriaEntity);
 
-        //associar a categoria existente ao livro
-        categoria.setLivrosCategoria(categoriaExistenteBanco.get().getLivrosCategoria());
-        categoriaRepositoryImplement.saveCategoria(categoria);
+        //Converter os dados da Categoria Entidade para o CategoriaDTO só mostrar o que necessita no JSON para ser atualizado
+        CategoriaDTO categoriaDTO = modelMapper.map(categoriaEntity, CategoriaDTO.class);
 
-             /*
-        {
-    "nome": "livro2",
-    "anoLancamento": 1998,
-    "autor":{
-        "id": 2,
-        "nome":"autor2"
-        Exemplo de associação de adição de um livro associado a um autor
-    }
-}
-         */
+
+        //Vou agora salvar esse categoria nova
+        System.out.println("Categoria salva com sucesso!" + categoriaDTO.getNomeCategoria());
+
     }
 
 
@@ -103,40 +99,65 @@ public class CategoriaService implements Serializable {
         return categoriaRepositoryImplement.findCategoriaById(id);
     }
 
-    public Optional<Categoria> findCategoriaByNome(String nome){
 
-        TypedQuery<Categoria> query = entityManager.createQuery("SELECT c FROM Categoria c WHERE c.nome =:nomeCategoria", Categoria.class);
-        query.getSingleResult();
+    public Optional<CategoriaDTO> findCategoriaByNome(String nome){
+
+
+        TypedQuery<Categoria> query = entityManager.createQuery("SELECT c FROM Categoria c WHERE c.nomeCategoria =:nomeCategoria", Categoria.class);
         query.setParameter("nomeCategoria", nome);
-        return query.getResultList().stream().findFirst();
-    }
-
-
-    public List<Categoria> findAllCategorias(){
 
         try{
-            return categoriaRepositoryImplement.findAllCategoria();
-        }catch (NoSuchElementException e){
-            return null;
+            //Busca a categoria no banco de dados
+            Categoria categoria = query.getSingleResult();
+
+            //Mapeia a categoria para a categoriaDTO
+            CategoriaDTO categoriaDTO = modelMapper.map(query, CategoriaDTO.class);
+
+            //Retorna o DTO como optimal
+            return Optional.ofNullable(categoriaDTO);
+        }catch (NoResultException e){
+            //Se nenhum resultado for encontrado, retorna um Optimal vazio
+            return Optional.empty();
         }
     }
 
+//Funcionou
+    public List<CategoriaDTO> findAllCategorias(){
+
+        List <Categoria> categoriaList = categoriaRepositoryImplement.findAllCategoria();
+
+        if (categoriaList.isEmpty()){
+            throw new NoSuchElementException("Não há nenhuma categoria nesta lista!");
+        }
+
+
+    //Convertendo nossa lista de categoria para categoriaDTO, para instanciarmos somente o nome
+       List< CategoriaDTO> categoriaDTO = categoriaList.stream().map(categoria -> modelMapper.map(categoria, CategoriaDTO.class)).collect(Collectors.toList());
+        return categoriaDTO;
+    }
 
 
 
 
-    public void updateCategoria(int id, Categoria categoria){
+    //Funcionou
+    public void updateCategoria(int id, CategoriaDTO categoria){
 
-        //Procurar a categoria já existente no banco de dados, por sua id
+        //Procurar a categoria já existente no banco de dados, por sua id do pacote de Entidade
         Optional<Categoria> theCategoria = categoriaRepositoryImplement.findCategoriaById(id);
 
 
-        //Verificar se a categoria está presente vamos atualizá-lo, sem mexer no livro
+        //Verificar se a categoria está presente vamos atualizá-lo
         if(theCategoria.isPresent()){
             Categoria existingCategoria = theCategoria.get(); //instanciando uma categoria existente, e obtendo os valores da categoria encontrada
             existingCategoria.setNomeCategoria(categoria.getNomeCategoria()); //setar o nome da categoria existente, pelo nome da categoria que passamos de parâmetro
-            existingCategoria.setLivrosCategoria(categoria.getLivrosCategoria());
-           categoriaRepositoryImplement.saveCategoria(existingCategoria);
+            //existingCategoria.setLivrosCategoria(categoria.getLivrosCategoria());
+
+
+            //CPegar os dados da minha categoria existente, e transferir para minha categoriaDTO só mostrar o necessário no JSON
+           CategoriaDTO categoriaDTO = modelMapper.map(existingCategoria, CategoriaDTO.class);
+
+            categoriaRepositoryImplement.saveCategoria(existingCategoria);
+
         }else{
             throw new NoSuchElementException("Categoria não encontrado!");
         }

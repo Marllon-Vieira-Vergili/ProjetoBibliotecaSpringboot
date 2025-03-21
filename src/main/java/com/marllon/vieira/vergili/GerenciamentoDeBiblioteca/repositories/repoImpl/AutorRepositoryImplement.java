@@ -1,7 +1,6 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repository.AutorRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

@@ -15,6 +15,6 @@ public interface CategoriaRepository extends JpaRepository <Categoria, Integer> 
 
    //Método Customizado de categoria, para encntrar pelo nome
 
-    @Query("SELECT c FROM Categoria c WHERE c.nomeCategoria = :nome")
+    @Query("SELECT c FROM Categoria c WHERE c.nomeCategoria = :nomeCategoria")
       Optional<Categoria> findCategoriaByNome(@Param("nomeCategoria") String nome);
 }

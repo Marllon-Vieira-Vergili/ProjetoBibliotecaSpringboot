@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.Cascade;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -124,6 +125,14 @@ public class Leitor {
 
     public void setLeitorEmprestimos(List<Emprestimo> leitorEmprestimos) {
         this.leitorEmprestimos = leitorEmprestimos;
+    }
+
+    //associar a adição de um livro para o leitor
+    public void addLivro(Livro livro){
+        if(this.getLivro() != null){
+           this.livro = new ArrayList<>();
+        }
+        this.livro.add(livro);
     }
 
     @Override

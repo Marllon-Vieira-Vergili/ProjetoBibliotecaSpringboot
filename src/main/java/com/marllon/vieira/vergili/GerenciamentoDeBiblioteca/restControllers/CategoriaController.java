@@ -1,4 +1,5 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.restControllers;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.dto.CategoriaDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Categoria;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Livro;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services.CategoriaService;
@@ -20,9 +21,9 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
     }
 
-
+    //Funcionou
     @GetMapping(value = "/mostrartodascategorias")
-    public List<Categoria> mostrarTodosCategorias(){
+    public List<CategoriaDTO> mostrarTodosCategorias(){
         return categoriaService.findAllCategorias();
     }
 
@@ -35,22 +36,19 @@ public class CategoriaController {
 
 
     @GetMapping(value = "/mostrarcategoriapelonome/{nome}")
-    public Optional<Categoria> mostrarCategoriaPeloNome(@PathVariable String nome){
+    public Optional<CategoriaDTO> mostrarCategoriaPeloNome(@PathVariable String nome){
         return categoriaService.findCategoriaByNome(nome);
     }
 
-
-
-
-
+    //Funcionou
     @PostMapping(value = "/adicionarcategoria")
-    public void adicionarCategoria(@RequestBody Categoria categoria){
+    public void adicionarCategoria(@RequestBody CategoriaDTO categoria){
         categoriaService.saveCategoria(categoria);
     }
 
-
+    //Funcionou
     @PutMapping(value = "/atualizarcategoria/{id}")
-    public void atualizarCategoria(@PathVariable Integer id, @RequestBody Categoria categoria){
+    public void atualizarCategoria(@PathVariable Integer id, @RequestBody CategoriaDTO categoria){
         categoriaService.updateCategoria(id, categoria);
     }
 

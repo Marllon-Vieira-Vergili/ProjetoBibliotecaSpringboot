@@ -1,6 +1,4 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -15,6 +13,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "autor")
 public class Autor implements Serializable {
+
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -145,6 +146,7 @@ public class Autor implements Serializable {
     public void addLivro(Livro livro) {
         if(livros == null){
             livros = new ArrayList<>();
+
         }
         livro.addAutor(this);
     }

@@ -2,10 +2,8 @@ package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services;
 
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.*;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.LeitorRepositoryImplementation;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repository.LeitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -36,12 +34,10 @@ public class LeitorService implements Serializable {
 
     public Optional<Leitor> encontrarLeitorPeloNome(String nome) {
 
-        try {
-            return leitorRepositoryImplementation.encontrarLeitorPeloNome(nome);
-
-        } catch (NoSuchElementException e) {
-            return null;
+        if(leitorRepositoryImplementation.encontrarLeitorPeloNome(nome).isEmpty()){
+            throw new NoSuchElementException("Leitor não encontrado!");
         }
+            return leitorRepositoryImplementation.encontrarLeitorPeloNome(nome);
 
     }
 
@@ -88,6 +84,34 @@ public class LeitorService implements Serializable {
         } catch (Exception e){
             throw new IllegalStateException("Erro ao salvar o leitor!" + e.getMessage());
         }
+
+        /*
+        COMO MEU JSON PRECISA SAIR
+        {
+  "id": 1073741824,
+  "nome": "string",
+  "sobrenome": "string",
+  "email": "string",
+  "idade": 1073741824,
+  "livro": [
+    "string"
+  ],
+  "leitorEmprestimos": [
+    {
+      "id": 1073741824,
+      "dataEmprestimo": "2025-03-21T12:20:42.302Z",
+      "dataDevolucao": "2025-03-21T12:20:42.302Z",
+      "estaEmprestado": true,
+      "livros": [
+        "string"
+      ],
+      "emprestimoParaLeitores": [
+        "string"
+      ]
+    }
+  ]
+}
+         */
     }
 
 
@@ -96,8 +120,9 @@ public class LeitorService implements Serializable {
 
     public Optional<Leitor> findLeitorById(int id) {
 
-        Leitor leitor = leitorRepositoryImplementation.findLeitorById(id).orElseThrow(() -> new  NoSuchElementException ("Não há nenhum leitor com essa id!"));
-
+        if (leitorRepositoryImplementation.findLeitorById(id).isEmpty()){
+            throw new NoSuchElementException("Não há nenhum leitor com esse id!");
+        }
         return leitorRepositoryImplementation.findLeitorById(id);
     }
 
@@ -105,11 +130,11 @@ public class LeitorService implements Serializable {
 
     public List<Leitor> findAllLeitor(){
 
-        try{
-            return leitorRepositoryImplementation.findAllLeitor();
-        }catch (NoSuchElementException e){
-            return null;
+
+        if (leitorRepositoryImplementation.findAllLeitor().isEmpty()){
+            throw new NoSuchElementException("Não há nenhum leitor nesta lista!");
         }
+        return leitorRepositoryImplementation.findAllLeitor();
     }
 
 
@@ -131,6 +156,34 @@ public class LeitorService implements Serializable {
             throw new NoSuchElementException("leitor não encontrado!");
         }
 
+
+        /*
+        COMO MEU JSON PRECISA SAIR
+        {
+  "id": 1073741824,
+  "nome": "string",
+  "sobrenome": "string",
+  "email": "string",
+  "idade": 1073741824,
+  "livro": [
+    "string"
+  ],
+  "leitorEmprestimos": [
+    {
+      "id": 1073741824,
+      "dataEmprestimo": "2025-03-21T12:19:58.320Z",
+      "dataDevolucao": "2025-03-21T12:19:58.320Z",
+      "estaEmprestado": true,
+      "livros": [
+        "string"
+      ],
+      "emprestimoParaLeitores": [
+        "string"
+      ]
+    }
+  ]
+}
+         */
     }
 
 
@@ -167,13 +220,10 @@ public class LeitorService implements Serializable {
 
     public Optional<Leitor> findLeitorByEmail(String email){
 
-        try{
-
-            return leitorRepositoryImplementation.findLeitorByEmail(email);
-
-        }catch (NoSuchElementException e){
-            return null;
+        if (leitorRepositoryImplementation.findLeitorByEmail(email).isEmpty()){
+            throw new NoSuchElementException("Não há nenhuma leitor com esse email");
         }
+            return leitorRepositoryImplementation.findLeitorByEmail(email);
 
     }
 }

@@ -1,14 +1,13 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Emprestimo;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.EmprestimoRepositoryImplementation;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repository.EmprestimoRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Scanner;
 
 
 /*
@@ -20,8 +19,6 @@ IMPLEMENTAÇÂO DAS LÒGICAS CORRETAS E TRATADAS EM TODOS OS MÈTODOS
 
 @Service
 public class EmprestimoService implements Serializable {
-
-    Scanner sc = new Scanner(System.in);
 
 
     //Instanciando apenas o Repositório de métodos para o Emprestimo, e Injetando
@@ -35,6 +32,22 @@ public class EmprestimoService implements Serializable {
 
     public void saveEmprestimo(Emprestimo emprestimo) {
         emprestimoRepositoryImplementation.saveEmprestimo(emprestimo);
+
+        /*
+        COMO MEU EMPRESTIMO PRECISA SAIR EM JSON
+        {
+  "id": 1073741824,
+  "dataEmprestimo": "2025-03-21T12:22:08.997Z",
+  "dataDevolucao": "2025-03-21T12:22:08.997Z",
+  "estaEmprestado": true,
+  "livros": [
+    "string"
+  ],
+  "emprestimoParaLeitores": [
+    "string"
+  ]
+}
+         */
     }
 
 
@@ -51,7 +64,7 @@ public class EmprestimoService implements Serializable {
         }
         System.out.println("ID encontrada! a id informada foi: " + id);
 
-        System.out.println("Detalhes do emprestimo: " + emprestimo.get());
+        System.out.println("Detalhes do emprestimo: " + emprestimo.isPresent());
         return emprestimoRepositoryImplementation.findEmprestimoById(id);
 
     }
@@ -73,6 +86,22 @@ public class EmprestimoService implements Serializable {
             emprestimo.setId(id);
             emprestimoRepositoryImplementation.saveEmprestimo(emprestimo);
         }
+
+        /*
+        COMO MEU JSON PRECISA SAIR
+        {
+  "id": 1073741824,
+  "dataEmprestimo": "2025-03-21T12:21:39.927Z",
+  "dataDevolucao": "2025-03-21T12:21:39.927Z",
+  "estaEmprestado": true,
+  "livros": [
+    "string"
+  ],
+  "emprestimoParaLeitores": [
+    "string"
+  ]
+}
+         */
 
     }
 

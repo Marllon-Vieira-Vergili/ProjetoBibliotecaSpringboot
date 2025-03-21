@@ -1,4 +1,4 @@
-
+/*
 
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.testing.testingAssociation;
 
@@ -26,11 +26,11 @@ public class AutorELivroTesting {
 
 
 
-    /*
+
 
     Meta de amanha: buscar o autor e dentro do autor, retornar um array de livros
     e ao buscar em livro, retornar o autor dentro do livro
-     */
+
 
     @Bean
     public CommandLineRunner commandLineRunner(AutorService autorService, LivroService livroService){
@@ -75,3 +75,5 @@ public class AutorELivroTesting {
     }
 }
 
+
+*/

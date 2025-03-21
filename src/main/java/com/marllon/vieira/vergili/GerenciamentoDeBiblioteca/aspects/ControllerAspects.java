@@ -1,4 +1,4 @@
-/*
+
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.aspects;
 
 import org.aspectj.lang.JoinPoint;
@@ -19,10 +19,10 @@ public class ControllerAspects {
 
 
     //Instanciando um Logger que vai gerar log, que vou pegar o log, de uma classe, pegando o nome da classe
-    private Logger meuLog = Logger.getLogger(getClass().getName());
+    private final Logger meuLog = Logger.getLogger(getClass().getName());
 
 
-    @Before("LerOaspectoDeQualquerPacote()")
+    @Before("com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.aspects.BibliotecaPointcutsAOP.MostrarLogsDosMetodosdeRestControllers())")
     public void MostrarLogsDosMetodosdeRestControllersAntesExecucao(JoinPoint joinPoint){
 
 
@@ -61,4 +61,3 @@ public class ControllerAspects {
 }
 
 
- */

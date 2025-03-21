@@ -1,8 +1,10 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.dto.AutorDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.AutorRepositoryImplement;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repository.LivroRepository;
 import jakarta.persistence.EntityManager;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.Serializable;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /*
@@ -23,7 +26,6 @@ IMPLEMENTAÇÂO DAS LÒGICAS CORRETAS E TRATADAS EM TODOS OS MÈTODOS
 @Service
 public class AutorService implements Serializable {
 
-
     //Instanciando apenas o Repositório de métodos para o autor, e Injetando
     @Autowired
     private AutorRepositoryImplement autorRepositoryImplement;
@@ -34,46 +36,40 @@ public class AutorService implements Serializable {
     @Autowired
     private EntityManager entityManager;
 
-
-    //Construtor
-    public AutorService(AutorRepositoryImplement autorRepositoryImplement){
-        this.autorRepositoryImplement = autorRepositoryImplement;
-    }
+    @Autowired
+    private ModelMapper modelMapper; //Fazer com que minhas DTOs peguei dados da Entity
 
 
     //TODOS OS MÈTODOS
 
 
     //Método funcionando ok!
-    public void saveAutor(Autor autor) {
-
+    public AutorDTO saveAutor(AutorDTO autor) {
 
         //Verificar se os dados passados para a criação do autor não serão nulos, ou se já existe,
         //Quando instanciarmos em outro nosso método..
 
-        if(autor == null){
+        if (autor == null) {
             throw new IllegalArgumentException("O autor não pode ser nulo!");
         }
-        if(autor.getNome() == null || autor.getNome().isEmpty()){
+        if (autor.getNome() == null || autor.getNome().isEmpty()) {
             throw new IllegalArgumentException("O nome do autor não pode ser nulo!");
         }
-        if (autor.getTelefone() == null || autor.getTelefone().isEmpty()){
+        if (autor.getTelefone() == null || autor.getTelefone().isEmpty()) {
             throw new IllegalArgumentException("O Telefone do autor é obrigatório!");
         }
-        if (autor.getCidade() == null || autor.getCidade().isEmpty()){
+        if (autor.getCidade() == null || autor.getCidade().isEmpty()) {
             throw new IllegalArgumentException("A cidade do autor é obrigatório!");
         }
-        if (autor.getEmail() == null || autor.getEmail().isEmpty()){
+        if (autor.getEmail() == null || autor.getEmail().isEmpty()) {
             throw new IllegalArgumentException("O Email do autor é obrigatório!");
         }
-
-
         //Verificar se ja existirá um autor com os mesmos dados, através de seu email
         Optional<Autor> autorExiste = autorRepositoryImplement.findByEmail(autor.getEmail());
 
-       if (autorExiste.isPresent()) {
-           throw new IllegalStateException("Já existe um autor com esse e-mail cadastrado: " + autor.getEmail());
-       }
+        if (autorExiste.isPresent()) {
+            throw new IllegalStateException("Já existe um autor com esse e-mail cadastrado: " + autor.getEmail());
+        }
 
         //Instanciar um novo autor
         Autor novoAutor = new Autor();
@@ -83,31 +79,37 @@ public class AutorService implements Serializable {
         novoAutor.setCidade(autor.getCidade());
 
         //salvar o autor no banco de dados
-        try{
+        try {
             autorRepositoryImplement.saveAutor(novoAutor);
             System.out.println("Autor cadastrado com sucesso! Seguem os novos dados do autor adicionado:  " + novoAutor);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new IllegalStateException("Erro ao salvar o autor!" + e.getMessage());
         }
+
+        //Usar o modelmapper para converter a entidade autor para DTO
+        AutorDTO autorDTO = modelMapper.map(novoAutor, AutorDTO.class);
+
+        //retornar o DTO para ser enviado como JSON
+        return autorDTO;
+
+
     }
 
 
+    //Método Funcionando ok!
+    public AutorDTO findAutorById(int autorId) {
 
 
-
-//Método Funcionando ok!
-    public Optional<Autor> findAutorById(int autorId) {
-
-        //Verificar primeiro, se a Id do autor existe.
-        if (autorId < 0 ) {
-           throw new NoSuchElementException("Id do autor inválida!");
+        //Verificar primeiro, se a Id passada será menor ou igual a 0
+        if (autorId <= 0) {
+            throw new NoSuchElementException("Id do autor inválida!");
         }
 
         //Vamos instanciar o autor, Encontrando ele pela Id que for passada.
-        Optional <Autor> autor = autorRepositoryImplement.findAutorById(autorId);
+        Optional<Autor> autor = autorRepositoryImplement.findAutorById(autorId);
 
         //Vamos agora verificar se o autor existe.
-        if(autor.isEmpty()){
+        if (autor.isEmpty()) {
             throw new NoSuchElementException("Nenhum autor encontrado com essa ID: " + autorId);
         }
 
@@ -117,125 +119,128 @@ public class AutorService implements Serializable {
 
 
         //Vamos verificar se o autor tem livros associados
-        if(foundAutor.getLivros().isEmpty() || foundAutor.getLivros() == null){
+        if (foundAutor.getLivros().isEmpty() || foundAutor.getLivros() == null) {
             System.out.println("Este autor não possui livros associados a ele!" + foundAutor);
             foundAutor.setLivros(new ArrayList<>());
-        }
-        else{
+        } else {
             //Se houver livros associados, vamos imprimir a lista de livros associados
             System.out.println("Este autor tem: " + foundAutor.getLivros().size() + " livros associados a ele");
             System.out.println("Os livros são: " + foundAutor.getLivros());
         }
 
-
+        //Converter o mapeamento de Autor para Autor dto
+        AutorDTO autorConvertido = modelMapper.map(foundAutor, AutorDTO.class);
 
         //retornar o autor encontrado
-        return Optional.of(foundAutor);
+        return autorConvertido;
     }
 
 
     //Método funcionando ok
-    public List<Autor> findAllAutor(){
+    public List<AutorDTO> findAllAutor() {
 
-        if (autorRepositoryImplement.findAllAutor().isEmpty()){
+        //Instanciar uma lista de autores
+        List<Autor> listaAutores = autorRepositoryImplement.findAllAutor();
+
+        //Se não possuir nenhum autor na lista
+        if (listaAutores.isEmpty()) {
             throw new NoSuchElementException("Não há nenhum elemento nesta lista de autor!");
         }
-        return autorRepositoryImplement.findAllAutor();
 
+//Converter todos os autores da lista para um autor DTO, usando modelmapper
+List<AutorDTO> listaautoresDTO = listaAutores.stream().map(autor -> modelMapper.map(autor, AutorDTO.class)).toList();
+
+
+        //Se possuir autor na lista, mostrar todos
+
+        return listaautoresDTO;
     }
 
-//Método funcionando OK!
-    public void updateAutor(int id, Autor autor){
+
+    //Método funcionando OK!
+    public AutorDTO updateAutor(int id, AutorDTO autor) {
 
         //Verificar se os a id do autor que eu quero atualizar existe no banco de dados
         Optional<Autor> existingAutor = autorRepositoryImplement.findAutorById(id);
 
-        if (existingAutor.isEmpty()){
+        if (existingAutor.isEmpty()) {
             throw new NoSuchElementException("Autor não encontrado com essa ID!" + id);
         }
 
         //verificar se já possuirá algum autor, verificando pelo mesmo email
         //Optional<Autor> emailAutor = autorRepositoryImplement.findByEmail(autor.getEmail());
         //if(emailAutor.isPresent() && emailAutor.get().getId() != id){
-            //throw new IllegalStateException("Já existe um autor cadastrado com este email");
+        //throw new IllegalStateException("Já existe um autor cadastrado com este email");
         //}
 
 
         //verificar se os dados estão corretos para salvar no banco de dados
-        if(autor.getNome() == null || autor.getNome().isEmpty()|| autor.getNome().isBlank()){
+        if (autor.getNome() == null || autor.getNome().isEmpty() || autor.getNome().isBlank()) {
             throw new IllegalArgumentException("O nome do autor não pode ser vazio");
-        }
-
-        else if(autor.getCidade() == null || autor.getCidade().isEmpty()|| autor.getNome().isBlank()){
+        } else if (autor.getCidade() == null || autor.getCidade().isEmpty() || autor.getCidade().isBlank()) {
             throw new IllegalArgumentException("O nome da cidade não pode ser vazio");
-        }
-
-        else if(autor.getEmail() == null || autor.getEmail().isEmpty()|| autor.getEmail().isBlank()){
+        } else if (autor.getEmail() == null || autor.getEmail().isEmpty() || autor.getEmail().isBlank()) {
             throw new IllegalArgumentException("O email não pode ser vazio!");
-        }
-
-        else if(autor.getTelefone() == null || autor.getTelefone().isEmpty()|| autor.getTelefone().isBlank()){
+        } else if (autor.getTelefone() == null || autor.getTelefone().isEmpty() || autor.getTelefone().isBlank()) {
             throw new IllegalArgumentException("O Telefone não pode ficar vazio!");
         }
 
-            //atualizar os dados no banco de dados
-            Autor updatedAutor = existingAutor.get();
-            updatedAutor.setNome(autor.getNome());
-            updatedAutor.setTelefone(autor.getTelefone());
-            updatedAutor.setCidade(autor.getCidade());
-            updatedAutor.setEmail(autor.getEmail());
-            autorRepositoryImplement.saveAutor(updatedAutor);
-            System.out.println("Autor atualizado com sucesso!: " + updatedAutor);
-        }
+        //atualizar os dados no banco de dados
+        Autor updatedAutor = existingAutor.get();
+        updatedAutor.setNome(autor.getNome());
+        updatedAutor.setTelefone(autor.getTelefone());
+        updatedAutor.setCidade(autor.getCidade());
+        updatedAutor.setEmail(autor.getEmail());
 
-//Método funcionando ok!
-    public void deleteAutor(int id){
+        //Salvar o autor atualizado
+        autorRepositoryImplement.saveAutor(updatedAutor);
+
+        //Converter todos os dados do meu autor, para o AutorDTO, para aparecer no JSON
+        System.out.println("Autor atualizado com sucesso!: " + updatedAutor);
+        return modelMapper.map(updatedAutor, AutorDTO.class);
+    }
+
+    //Método funcionando ok!
+    public void deleteAutor(int id) {
 
         //Verificar se a id do autor existe
-        Optional<Autor> autorOptional = autorRepositoryImplement.findAutorById(id);
-        if (autorOptional.isEmpty()){
+        Optional<Autor> autorexiste = autorRepositoryImplement.findAutorById(id);
+        if (autorexiste.isEmpty()) {
             throw new IllegalArgumentException("Id não foi encontrada!");
         }
 
-        Autor autor = autorOptional.get();
+        Autor autor = autorexiste.get();
+
+        //Mapear os dados do nosso autor que será deletado para o autorDAO
+        AutorDTO autorDTO = modelMapper.map(autor, AutorDTO.class);
 
         //Se o autor existir, mas não tiver nenhum livro com ele, excluir só o autor
-        if(autor.getLivros() == null && autor.getLivros().isEmpty()){
-            autorRepositoryImplement.deleteAutor(id);
+        if (autor.getLivros() == null && autor.getLivros().isEmpty()) {
             System.out.println("Somente autor deletado, pois o mesmo não possui livros");
-
         }
 
         autorRepositoryImplement.deleteAutor(id);
-    System.out.println("Autor: " + autor.getNome() + " Deletado com sucesso!");
-    System.out.println("Livros associados ao autor deletados com sucesso! " + autor.getLivros());
+
+        System.out.println("Autor: " + autor.getNome() + " Deletado com sucesso!");
+        System.out.println("Livros associados ao autor deletados com sucesso! " + autor.getLivros());
     }
 
 
+    //funcionou
+    public Optional<AutorDTO> findAutorByEmail(String email) {
 
-    public Optional<Autor> findAutorByEmail(String email){
-
-                try{
-
-                    return autorRepositoryImplement.findByEmail(email);
-
-                }catch (NoSuchElementException e){
-                    return null;
-                }
-              /*
-        //String jpql = "SELECT a FROM Autor a WHERE a.email =: email";
-        TypedQuery<Autor> query = entityManager.createQuery("SELECT a FROM autor WHERE a.email =: email ", Autor.class);
-
-        query.setParameter("a.email", email);
-
-        try {
-            Autor autor = query.getSingleResult();
-            return Optional.ofNullable((autor));
-
-        } catch (Exception e) {
-            return Optional.empty();
+//Se o autor não for encontrado pelo email
+        if (autorRepositoryImplement.findByEmail(email).isEmpty()) {
+            throw new NoSuchElementException("Não há nenhum autor associado a esse email!");
         }
-         */
+
+        Optional<Autor> autorEncontradoPorEmail = autorRepositoryImplement.findByEmail(email);
+
+        AutorDTO autorDTO = modelMapper.map(autorEncontradoPorEmail,AutorDTO.class);
+
+        return Optional.ofNullable(autorDTO);
     }
 }
+
+
 

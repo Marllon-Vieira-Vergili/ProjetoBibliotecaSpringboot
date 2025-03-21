@@ -1,12 +1,14 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.*;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.AutorRepositoryImplement;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.CategoriaRepositoryImplement;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.LivroRepositoryImplementation;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repository.AutorRepository;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repository.LivroRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -31,12 +33,18 @@ public class LivroService implements Serializable {
     @Autowired
     private AutorRepositoryImplement autorRepositoryImplement;
 
+    @Autowired
+    private CategoriaRepositoryImplement categoriaRepositoryImplement;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public LivroService(LivroRepositoryImplementation livroRepositoryImplementation) {
         this.livroRepositoryImplementation = livroRepositoryImplementation;
     }
 
+    //ta dando erro no json?
     public void saveLivro(Livro livro) {
-
         //Verificar se os dados digitados não estão vazios
         if (livro.getNome() == null || livro.getNome().isEmpty() || livro.getNome().isBlank()) {
             throw new IllegalArgumentException("O nome do livro não pode ficar em branco ou vazio!");
@@ -48,37 +56,99 @@ public class LivroService implements Serializable {
         }
 
 
-        //Se o autor não for informado, será criado um novo autor
-        if (livro.getAutor() == null) {
-            throw new NullPointerException("O autor não pode ser nulo! um livro precisa de um autor!");
-        }
-
-
         //Verificar se o autor existe no banco de dados
         Optional<Autor> autorExistente = autorRepositoryImplement.findAutorById(livro.getAutor().getId());
         if (autorExistente.isEmpty()) {
             throw new IllegalArgumentException("O autor informado não existe no banco de dados!");
         }
-
-        //associar o autor existente ao livro
         livro.setAutor(autorExistente.get());
-       livroRepositoryImplementation.saveLivro(livro);
 
+        //Associar o livro a uma categoria existente
+        if (livro.getCategorias() != null) {
+            List<Categoria> categoriasAssociadas = new ArrayList<>();
+            for (Categoria c : livro.getCategorias()) {
+                Categoria categoriaDoBancoDeDados = categoriaRepositoryImplement.findCategoriaByNome(c.getNomeCategoria())
+                        .orElseThrow(() -> new IllegalArgumentException("Categoria não encontrada com esse nome: " + c.getNomeCategoria()));
+                categoriasAssociadas.add(categoriaDoBancoDeDados);
+
+            }
+            livro.setCategorias(categoriasAssociadas);
+        }
+
+        //associar o livro a um leitor
+        if(livro.getLeitor() != null){
+            
+        }
+
+        livroRepositoryImplementation.saveLivro(livro);
              /*
+             COmo meu JSON PRECISA SAIR
+{
+  "id": 1073741824,
+  "nome": "string",
+  "anoLancamento": 1073741824,
+  "autor": {
+    "id": 1073741824,
+    "nome": "string",
+    "email": "string",
+    "telefone": "string",
+    "cidade": "string",
+    "livros": [
+      "string"
+    ]
+  },
+  "leitor": [
+    {
+      "id": 1073741824,
+      "nome": "string",
+      "sobrenome": "string",
+      "email": "string",
+      "idade": 1073741824,
+      "livro": [
+        "string"
+      ],
+      "leitorEmprestimos": [
         {
-    "nome": "livro2",
-    "anoLancamento": 1998,
-    "autor":{
-        "id": 2,
-        "nome":"autor2"
-        Exemplo de associação de adição de um livro associado a um autor
+          "id": 1073741824,
+          "dataEmprestimo": "2025-03-21T12:17:41.727Z",
+          "dataDevolucao": "2025-03-21T12:17:41.727Z",
+          "estaEmprestado": true,
+          "livros": [
+            "string"
+          ],
+          "emprestimoParaLeitores": [
+            "string"
+          ]
+        }
+      ]
     }
+  ],
+  "livroEmprestimos": [
+    {
+      "id": 1073741824,
+      "dataEmprestimo": "2025-03-21T12:17:41.727Z",
+      "dataDevolucao": "2025-03-21T12:17:41.727Z",
+      "estaEmprestado": true,
+      "livros": [
+        "string"
+      ],
+      "emprestimoParaLeitores": [
+        "string"
+      ]
+    }
+  ],
+  "categorias": [
+    {
+      "id": 1073741824,
+      "nomeCategoria": "string",
+      "livrosCategoria": [
+        "string"
+      ]
+    }
+  ]
 }
          */
     }
-
-
-
 
 
     public Optional<Livro> findLivroById(int id) {
@@ -89,42 +159,90 @@ public class LivroService implements Serializable {
     }
 
 
+    public List<Livro> findAllivro() {
 
-    public List<Livro> findAllivro(){
-
-        try{
-            return livroRepositoryImplementation.findAllLivro();
-        }catch (NoSuchElementException e){
-            return null;
-        }
+        if (livroRepositoryImplementation.findAllLivro().isEmpty()){
+            throw new NoSuchElementException("Não há nenhum livro nesta lista!");
+    }
+    return livroRepositoryImplementation.findAllLivro();
     }
 
 
     public Optional<Livro> encontrarLivroPeloTitulo(String titulo){
 
-        try{
+        if (livroRepositoryImplementation.findByNome(titulo).isEmpty()){
+            throw new NoSuchElementException("Não há nenhum livro com esse título!");
+        }
             return livroRepositoryImplementation.findByNome(titulo);
 
-        }catch (NoSuchElementException e){
-            return null;
+        /*
+        COmo meu json precisa sair
+        {
+  "id": 1073741824,
+  "nome": "string",
+  "anoLancamento": 1073741824,
+  "autor": {
+    "id": 1073741824,
+    "nome": "string",
+    "email": "string",
+    "telefone": "string",
+    "cidade": "string",
+    "livros": [
+      "string"
+    ]
+  },
+  "leitor": [
+    {
+      "id": 1073741824,
+      "nome": "string",
+      "sobrenome": "string",
+      "email": "string",
+      "idade": 1073741824,
+      "livro": [
+        "string"
+      ],
+      "leitorEmprestimos": [
+        {
+          "id": 1073741824,
+          "dataEmprestimo": "2025-03-21T12:18:30.313Z",
+          "dataDevolucao": "2025-03-21T12:18:30.313Z",
+          "estaEmprestado": true,
+          "livros": [
+            "string"
+          ],
+          "emprestimoParaLeitores": [
+            "string"
+          ]
         }
-
-           /*
-        //Verificar se o livro existe pelo título
-        String jpqlQuery = "SELECT l from livro WHERE l.nome = :nome";
-        TypedQuery<Livro> query = entityManager.createQuery(jpqlQuery, Livro.class);
-
-        //Se o livro existir, voltar o nome do livro
-        query.setParameter("nome", nome);
-        try {
-            //Retornar o livro encontrado
-            return Optional.ofNullable(query.getSingleResult());
-        } catch (NoResultException e) {
-            System.out.println("Livro não encontrado!");
-            return null;
-        }
-
+      ]
+    }
+  ],
+  "livroEmprestimos": [
+    {
+      "id": 1073741824,
+      "dataEmprestimo": "2025-03-21T12:18:30.313Z",
+      "dataDevolucao": "2025-03-21T12:18:30.313Z",
+      "estaEmprestado": true,
+      "livros": [
+        "string"
+      ],
+      "emprestimoParaLeitores": [
+        "string"
+      ]
+    }
+  ],
+  "categorias": [
+    {
+      "id": 1073741824,
+      "nomeCategoria": "string",
+      "livrosCategoria": [
+        "string"
+      ]
+    }
+  ]
+}
          */
+
     }
 
 
@@ -143,6 +261,75 @@ public class LivroService implements Serializable {
         }else{
             throw new NoSuchElementException("livro não encontrado!");
         }
+
+
+        /*Como meu JSON precisa sair:
+
+        {
+  "id": 1073741824,
+  "nome": "string",
+  "anoLancamento": 1073741824,
+  "autor": {
+    "id": 1073741824,
+    "nome": "string",
+    "email": "string",
+    "telefone": "string",
+    "cidade": "string",
+    "livros": [
+      "string"
+    ]
+  },
+  "leitor": [
+    {
+      "id": 1073741824,
+      "nome": "string",
+      "sobrenome": "string",
+      "email": "string",
+      "idade": 1073741824,
+      "livro": [
+        "string"
+      ],
+      "leitorEmprestimos": [
+        {
+          "id": 1073741824,
+          "dataEmprestimo": "2025-03-21T12:16:39.410Z",
+          "dataDevolucao": "2025-03-21T12:16:39.410Z",
+          "estaEmprestado": true,
+          "livros": [
+            "string"
+          ],
+          "emprestimoParaLeitores": [
+            "string"
+          ]
+        }
+      ]
+    }
+  ],
+  "livroEmprestimos": [
+    {
+      "id": 1073741824,
+      "dataEmprestimo": "2025-03-21T12:16:39.410Z",
+      "dataDevolucao": "2025-03-21T12:16:39.410Z",
+      "estaEmprestado": true,
+      "livros": [
+        "string"
+      ],
+      "emprestimoParaLeitores": [
+        "string"
+      ]
+    }
+  ],
+  "categorias": [
+    {
+      "id": 1073741824,
+      "nomeCategoria": "string",
+      "livrosCategoria": [
+        "string"
+      ]
+    }
+  ]
+}
+         */
 
     }
 

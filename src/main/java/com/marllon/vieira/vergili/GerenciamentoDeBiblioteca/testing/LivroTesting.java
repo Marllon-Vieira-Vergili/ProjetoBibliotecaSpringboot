@@ -1,3 +1,4 @@
+/*
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.testing;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services.LivroService;
 import org.springframework.boot.CommandLineRunner;
@@ -9,8 +10,8 @@ public class LivroTesting {
 
 
     @Bean
-    public  CommandLineRunner commandLineRunner(LivroService livroService){
-        return runner ->{
+    public CommandLineRunner commandLineRunner(LivroService livroService) {
+        return runner -> {
 
             //deletarLivroPelaId(livroService);
             //adicionarLivro(livroService);
@@ -20,37 +21,38 @@ public class LivroTesting {
             //atualizarLivro(livroService);
         };
 
-    }
 
-    /*
-    private void encontrarLivroPeloTitulo(LivroService livroService) {
-        livroService.encontrarLivroPeloTitulo("O livro teste");
-    }
-
-     */
-
-    private void deletarLivroPelaId(LivroService livroService) {
-
-    }
-
-    private void atualizarLivro(LivroService livroService){
-
-    }
-
-    private void encontrarLivroPelaId(LivroService livroService) {
-
-    }
-
-    private void encontrarTodosLivros(LivroService livroService) {
+        private void encontrarLivroPeloTitulo (LivroService livroService){
+            livroService.encontrarLivroPeloTitulo("O livro teste");
+        }
 
 
+        private void deletarLivroPelaId (LivroService livroService){
 
-    }
+        }
+
+        private void atualizarLivro (LivroService livroService){
+
+        }
+
+        private void encontrarLivroPelaId (LivroService livroService){
+
+        }
+
+        private void encontrarTodosLivros (LivroService livroService){
 
 
-    private void adicionarLivro(LivroService livroService) {
+        }
 
 
+        private void adicionarLivro (LivroService livroService){
+
+
+        }
     }
 }
+
+
+
+ */
 

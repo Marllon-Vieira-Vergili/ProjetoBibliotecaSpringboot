@@ -1,4 +1,4 @@
-/*
+
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.aspects;
 
 import org.aspectj.lang.JoinPoint;
@@ -12,14 +12,20 @@ import org.springframework.stereotype.Component;
 @Order(4)
 public class ServicesAspects {
 
-    @Before("com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.aspects.BibliotecaPointcutsAOP.MostrarLogsDosMetodosdeServicos()")
+    @Before("com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.aspects.BibliotecaPointcutsAOP.MostrarLogsDosMetodosdeServicos())")
     public void MostrarLogsDosMetodosdeServicos(JoinPoint joinPoint){
         System.out.println("==========>>> Executando algum método do pacote de Services");
-        //display the method signature
 
-        //display method arguments
+        //pegar a assinatura do método
+        String method = joinPoint.getSignature().toShortString();
+        System.out.println("Método sendo executado: " + method);
+
+        //exibir os argumentos dos métodos
+        Object[] args = joinPoint.getArgs();
+        for(Object tempArgs: args){
+            System.out.println(tempArgs);
+        }
     }
 }
 
 
- */

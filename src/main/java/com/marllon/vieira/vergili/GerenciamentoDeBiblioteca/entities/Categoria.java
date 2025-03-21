@@ -1,12 +1,11 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+
 import jakarta.validation.constraints.NotNull;
 
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 @Table(name="categoria")
@@ -15,9 +14,8 @@ public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
+    @Column(name = "id")
     @NotNull
-    @NotEmpty
     private int id;
 
     @Column(name = "nome_categoria")
@@ -26,7 +24,8 @@ public class Categoria {
 
     //muitas categorias podem ter muitos livros, ordenados em sequência pela sua categoria
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "categorias")
-    private Set<Livro> livrosCategoria = new TreeSet<>();
+    @JsonBackReference
+    private List<Livro> livrosCategoria;
 
 
     public Categoria(){
@@ -52,12 +51,20 @@ public class Categoria {
         this.nomeCategoria = nomeCategoria;
     }
 
-    public Set<Livro> getLivrosCategoria() {
+    public List<Livro> getLivrosCategoria() {
         return livrosCategoria;
     }
 
-    public void setLivrosCategoria(Set<Livro> livrosCategoria) {
+    public void setLivrosCategoria(List<Livro> livrosCategoria) {
         this.livrosCategoria = livrosCategoria;
+    }
+
+    //associar uma categoria a um livro
+    public void addCategoriaToLivro(Livro livro) {
+        if(this.livrosCategoria == null){
+            this.livrosCategoria = new ArrayList<>();
+        }
+        this.livrosCategoria.add(livro);
     }
 
     @Override

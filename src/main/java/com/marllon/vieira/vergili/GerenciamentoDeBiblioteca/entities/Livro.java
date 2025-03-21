@@ -52,9 +52,10 @@ public class Livro implements Serializable {
 
 
     //Muitos livros podem ter muitas categorias
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "livro_tem_categoria", joinColumns = @JoinColumn(name = "livro_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_livro_para_categoria_id")),
             inverseJoinColumns = @JoinColumn(name = "categoria_id",referencedColumnName = "id",foreignKey = @ForeignKey(name = "fk_categoria_para_livro")))
+    @JsonManagedReference
     private List<Categoria> categorias;
 
 
@@ -136,7 +137,7 @@ public class Livro implements Serializable {
 
 
     //adicionar a assosiação de um livro a uma categoria
-    public void addCategoria(Categoria categoria) {
+    public void addLivroToCategoria(Categoria categoria) {
         if(this.categorias == null){
             this.categorias = new ArrayList<>();
         }
