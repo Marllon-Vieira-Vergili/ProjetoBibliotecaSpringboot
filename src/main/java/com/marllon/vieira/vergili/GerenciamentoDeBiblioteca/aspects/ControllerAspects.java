@@ -1,6 +1,5 @@
 
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.aspects;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;

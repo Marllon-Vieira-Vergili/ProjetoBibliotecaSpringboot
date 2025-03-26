@@ -1,14 +1,19 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 import java.util.*;
 
 @Entity
 @Table(name="categoria")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Categoria {
 
 
@@ -16,69 +21,59 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @NotNull
-    private int id;
+
+    private Integer id;
 
     @Column(name = "nome_categoria")
     @NotNull
     private String nomeCategoria;
 
     //muitas categorias podem ter muitos livros, ordenados em sequência pela sua categoria
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "categorias")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "listaLivrosComCategoria")
     @JsonBackReference
-    private List<Livro> livrosCategoria;
+    private List<Livro> listaLivrosRelacionados = new ArrayList<>();
 
 
-    public Categoria(){
-    }
 
-    public Categoria(String nomeCategoria) {
-        this.nomeCategoria = nomeCategoria;
-    }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNomeCategoria() {
-        return nomeCategoria;
-    }
-
-    public void setNomeCategoria(String nomeCategoria) {
-        this.nomeCategoria = nomeCategoria;
-    }
-
-    public List<Livro> getLivrosCategoria() {
-        return livrosCategoria;
-    }
-
-    public void setLivrosCategoria(List<Livro> livrosCategoria) {
-        this.livrosCategoria = livrosCategoria;
-    }
+    //LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, CATEGORIA COM LIVROS)
 
     //associar uma categoria a um livro
-    public void addCategoriaToLivro(Livro livro) {
-        if(this.livrosCategoria == null){
-            this.livrosCategoria = new ArrayList<>();
+
+    public Categoria obterCategoriaDeUmLivro(Integer livroId){
+        for(Livro oneLivro: listaLivrosRelacionados){
+            if(oneLivro.getId().equals(livroId)){
+                return (Categoria) oneLivro.getListaLivrosComCategoria();
+            }
         }
-        this.livrosCategoria.add(livro);
+        return null;
     }
+
+    public void associarCategoriaAoLivro(Livro livro){
+        if(!listaLivrosRelacionados.contains(livro)){
+            listaLivrosRelacionados.add(livro); // Adiciona o livro à lista de livros relacionados
+            livro.getListaLivrosComCategoria().add(this); //bidirecionalidade
+        }
+    }
+
+
+
+    //ToString, equals e HashCode da entidade Categoria
+
 
     @Override
     public String toString() {
         return "Categoria{" +
                 "id=" + id +
-                ", nome_categoria='" + nomeCategoria + '\'' +
+                ", nomeCategoria='" + nomeCategoria + '\'' +
+                ", listaLivrosRelacionados=" + listaLivrosRelacionados +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Categoria categoria)) return false;
-        return id == categoria.id && Objects.equals(nomeCategoria, categoria.nomeCategoria);
+        return Objects.equals(id, categoria.id);
     }
 
     @Override

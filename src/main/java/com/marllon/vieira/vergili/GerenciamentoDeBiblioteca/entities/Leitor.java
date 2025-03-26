@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
@@ -12,6 +15,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "leitor")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Leitor {
 
 
@@ -19,7 +25,7 @@ public class Leitor {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name="nome")
     @NotNull
@@ -41,7 +47,7 @@ public class Leitor {
 
     @Column(name="idade")
     @NotNull
-    private int idade;
+    private Integer idade;
 
     //muitos leitores podem ter muitos livros
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH,
@@ -49,91 +55,42 @@ public class Leitor {
     @JoinTable(name = "leitor_com_livro", joinColumns = @JoinColumn(name = "leitor_id", referencedColumnName = "id"),
             foreignKey = @ForeignKey(name = "fk_leitor_id"), inverseJoinColumns =
     @JoinColumn(name = "livro_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_livro_id")))
-    private List<Livro> livro;
+    private List<Livro> listaLivrosRelacionadosAoLeitor = new ArrayList<>();
 
     //muitos leitores podem ter muitos empréstimos
-@ManyToMany(fetch = FetchType.EAGER, mappedBy = "emprestimoParaLeitores")
+@ManyToMany(fetch = FetchType.EAGER, mappedBy = "listaLeitoresComEmprestimos")
 @Cascade({org.hibernate.annotations.CascadeType.DETACH, org.hibernate.annotations.CascadeType.MERGE,
         org.hibernate.annotations.CascadeType.PERSIST, org.hibernate.annotations.CascadeType.REFRESH})
-    private List<Emprestimo> leitorEmprestimos;
+    private List<Emprestimo> listaEmprestimosRelacionadosAoLeitor = new ArrayList<>();
 
 
-
-    public Leitor(){
-
-    }
-
-    public Leitor(String nome, String sobrenome, String email, int idade) {
+    public Leitor(String nome, String sobrenome, String email, Integer idade) {
         this.nome = nome;
         this.sobrenome = sobrenome;
         this.email = email;
         this.idade = idade;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSobrenome() {
-        return sobrenome;
-    }
-
-    public void setSobrenome(String sobrenome) {
-        this.sobrenome = sobrenome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public int getIdade() {
-        return idade;
-    }
-
-    public void setIdade(int idade) {
-        this.idade = idade;
-    }
-
-    public List<Livro> getLivro() {
-        return livro;
-    }
-
-    public void setLivro(List<Livro> livro) {
-        this.livro = livro;
-    }
+      /*LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, LEITOR E LIVRO, LEITOR E EMPRESTIMO)*/
 
 
-    public List<Emprestimo> getLeitorEmprestimos() {
-        return leitorEmprestimos;
-    }
 
-    public void setLeitorEmprestimos(List<Emprestimo> leitorEmprestimos) {
-        this.leitorEmprestimos = leitorEmprestimos;
-    }
-
-    //associar a adição de um livro para o leitor
-    public void addLivro(Livro livro){
-        if(this.getLivro() != null){
-           this.livro = new ArrayList<>();
+    public void associarLeitorALivro(Livro livro){
+        if(!listaLivrosRelacionadosAoLeitor.contains(livro)){
+            listaLivrosRelacionadosAoLeitor.add(livro);
+            livro.getListaLeitoresRelacionados().add(this);
         }
-        this.livro.add(livro);
     }
+
+
+    public void associarLeitorAEmprestimo(Emprestimo emprestimo){
+        if(!listaEmprestimosRelacionadosAoLeitor.contains(emprestimo)){
+            listaEmprestimosRelacionadosAoLeitor.add(emprestimo);
+            emprestimo.getListaLeitoresComEmprestimos().add(this);
+        }
+    }
+
 
     @Override
     public boolean equals(Object o) {

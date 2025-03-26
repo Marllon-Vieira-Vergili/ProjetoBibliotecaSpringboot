@@ -1,4 +1,4 @@
-
+/*
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.aspects;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Categoria;
@@ -60,7 +60,7 @@ public class RepositoryAspects {
     }
 }
 
-/*
+
     @AfterReturning(value = "execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor.*(..))",
             returning = "autorDataReturning")
     public void RetornarTodosOsAutores(JoinPoint theJoinPoint, List<Autor> autorDataReturning){

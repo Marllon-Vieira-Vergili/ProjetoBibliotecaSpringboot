@@ -1,111 +1,81 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.Cascade;
-import java.time.Instant;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
+
 
 @Entity
 @Table(name = "emprestimo")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Emprestimo {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
+    @Getter
     @Column(name = "data_emprestimo")
     @NotNull(message = "Digite a data do empréstimo")
-    @NotBlank(message = "Não pode ficar em branco!")
-    private Instant  dataEmprestimo;
+    private LocalDate  dataEmprestimo;
 
     @Column(name = "data_devolucao")
     @NotNull(message = "Digite a data da devolução do livro")
-    @NotBlank(message = "digite quando o livro foi devolvido!")
-    private Instant dataDevolucao;
+    private LocalDate dataDevolucao;
 
     @Column(name = "esta_emprestado")
     @NotNull(message = "SIM OU NÂO")
-    private boolean estaEmprestado;
+    private boolean estaEmprestado = false;
 
 
     //Muitos empréstimos podem ter muitos livros
-    @ManyToMany(mappedBy = "livroEmprestimos",fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+    @ManyToMany(mappedBy = "listaEmprestimosRelacionados",fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
             CascadeType.REFRESH})
-    private List<Livro> livros;
+    private List<Livro> listaLivrosEmprestados = new ArrayList<>();
 
 
     //muitos empréstimos podem ter muitos leitores
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "emprestimo_para_leitor", joinColumns = @JoinColumn(name = "emprestimo_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_emprestimo_para_leitor_id")),
             inverseJoinColumns = @JoinColumn(name = "leitor_id",referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_leitor_para_emprestimo_id")))
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<Leitor> emprestimoParaLeitores;
+    private List<Leitor> listaLeitoresComEmprestimos = new ArrayList<>();
 
 
 
-    //Construtor vazio
-    public Emprestimo(){
 
-    }
-
-    public Emprestimo(Instant dataEmprestimo, Instant dataDevolucao, boolean estaEmprestado) {
+    public Emprestimo(LocalDate dataEmprestimo, LocalDate dataDevolucao, boolean estaEmprestado) {
         this.dataEmprestimo = dataEmprestimo;
         this.dataDevolucao = dataDevolucao;
         this.estaEmprestado = estaEmprestado;
     }
 
-    public int getId() {
-        return id;
-    }
+      /*LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, EMPRESTIMO A LIVRO, E EMPRESTIMO A LEITOR)*/
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
-    public Instant getDataEmprestimo() {
-        return dataEmprestimo;
-    }
 
-    public void setDataEmprestimo(Instant dataEmprestimo) {
-        this.dataEmprestimo = dataEmprestimo;
-    }
+    //Métodos de Associações
 
-    public Instant getDataDevolucao() {
-        return dataDevolucao;
-    }
-
-    public void setDataDevolucao(Instant dataDevolucao) {
-        this.dataDevolucao = dataDevolucao;
-    }
-
-    public boolean isEstaEmprestado() {
-        return estaEmprestado;
-    }
-
-    public void setEstaEmprestado(boolean estaEmprestado) {
-        this.estaEmprestado = estaEmprestado;
-    }
-
-    public List<Leitor> getEmprestimoParaLeitores() {
-        return emprestimoParaLeitores;
-    }
-
-    public void setEmprestimoParaLeitores(List<Leitor> emprestimoParaLeitores) {
-        this.emprestimoParaLeitores = emprestimoParaLeitores;
-    }
-
-    public List<Livro> getLivros() {
-        if (getLivros().isEmpty()){
-            throw new NoSuchElementException("Não há nenhum elemento na lista de livros");
+    public void associarEmprestimoALivro(Livro livro){
+        if(!listaLivrosEmprestados.contains(livro)){
+            listaLivrosEmprestados.add(livro);
+            livro.getListaEmprestimosRelacionados().add(this); //Adicionar no atributo da lista do arraylist do livro esse empréstimo associado
         }
-        return livros;
     }
 
-    public void setLivros(List<Livro> livros) {
-        this.livros = livros;
+    public void associarEmprestimoALeitor(Leitor leitor){
+            if(!listaLeitoresComEmprestimos.contains(leitor)){
+                listaLeitoresComEmprestimos.add(leitor);
+                leitor.getListaEmprestimosRelacionadosAoLeitor().add(this); //Adicionar no atributo da lista do arraylist do leitor esse empréstimo associado
+            }
     }
 
 

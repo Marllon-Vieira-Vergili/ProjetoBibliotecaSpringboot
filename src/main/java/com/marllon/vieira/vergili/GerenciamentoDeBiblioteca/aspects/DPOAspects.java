@@ -1,3 +1,5 @@
+/*
+
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.aspects;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.dto.*;
 import org.aspectj.lang.JoinPoint;
@@ -37,9 +39,9 @@ public class DPOAspects {
             }
             else if (tempargs instanceof EmprestimoDTO) {
             EmprestimoDTO emprestimo = (EmprestimoDTO) tempargs;
-            System.out.println("EmprestimoDTO dataEmprestimo: " + emprestimo.getDataEmprestimo());
-            System.out.println("EmprestimoDTO dataDevolucao: " + emprestimo.getDataDevolucao());
-            System.out.println("EmprestimoDTO estaEmprestado: " + emprestimo.isEstaEmprestado());
+            System.out.println("EmprestimoDTORecord dataEmprestimo: " + emprestimo.getDataEmprestimo());
+            System.out.println("EmprestimoDTORecord dataDevolucao: " + emprestimo.getDataDevolucao());
+            //System.out.println("EmprestimoDTORecord estaEmprestado: " + emprestimo.isEstaEmprestado());
 
         }
             else if (tempargs instanceof LeitorDTO) {
@@ -63,3 +65,5 @@ public class DPOAspects {
             }
         }
     }
+
+ */

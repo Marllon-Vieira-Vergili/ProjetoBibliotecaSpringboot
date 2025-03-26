@@ -5,14 +5,22 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Entity
 @Table(name = "autor")
-public class Autor implements Serializable {
+@Getter
+@Setter
+@NoArgsConstructor //Já define um construtor vazio automaticamente
+public class Autor {
 
 
 
@@ -20,7 +28,7 @@ public class Autor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name ="id")
-    private int id;
+    private Integer id;
 
     @NotNull
     @Size(min = 3, max = 50)
@@ -46,14 +54,10 @@ public class Autor implements Serializable {
 
 
     //um autor pode ter muitos livros
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "autor", cascade ={CascadeType.DETACH, CascadeType.MERGE,
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "autorRelacionado", cascade ={CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.REMOVE})
     @JsonManagedReference
-    private List<Livro> livros = new ArrayList<>();
-
-
-    public Autor() {
-    }
+    private List<Livro> listaLivrosDosAutores = new ArrayList<>();
 
     public Autor(String nome, String email, String telefone, String cidade) {
         this.nome = nome;
@@ -62,59 +66,46 @@ public class Autor implements Serializable {
         this.cidade = cidade;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    //LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, AUTOR E LIVRO)
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
+    //adicionar a assosiação do autor a sua lista de livros
 
 
+    public void associarAutorParaUmLivro(Livro livro) {
 
-    //private List<Livro> livrosTemp = new ArrayList<>();
-    public List<Livro> getLivros() {
-        if (livros.isEmpty()){
-            return livros;
-
+        if(!listaLivrosDosAutores.contains(livro)){
+            listaLivrosDosAutores.add(livro);
+            livro.setAutorRelacionado(this); //Adicionar no atributo da lista do arraylist do livro esse autor associado
         }
-        return livros;
     }
 
-    public void setLivros(List<Livro> livros) {
-        this.livros = livros;
+    //Gette e setter para Setar ou pegar um livro somente da lista
+    public Livro obterUmLivroDoAutor(Livro livro) {
+        for (Livro oneLivro : listaLivrosDosAutores) {
+            if (oneLivro.equals(livro)) {
+                return oneLivro;
+            }
+        }
+        return null;
+    }
+
+
+    public void associarUmLivroParaOutroAutor(Livro livro, Autor novoAutor){
+
+        Livro encontrarLivro = obterUmLivroDoAutor(livro);
+
+        if(encontrarLivro != null){
+            encontrarLivro.setAutorRelacionado(novoAutor);
+            encontrarLivro.getAutorRelacionado().getListaLivrosDosAutores().remove(encontrarLivro);
+
+            //adicionar o livro a lista do novo autor
+            if(!novoAutor.getListaLivrosDosAutores().contains(livro)){
+                novoAutor.getListaLivrosDosAutores().add(encontrarLivro);
+            }
+        }else{
+            throw new NoSuchElementException("Livro não encontrado na lista!");
+        }
     }
 
 
@@ -122,9 +113,8 @@ public class Autor implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Autor autor)) return false;
-        return id == autor.id;
+        return Objects.equals(id, autor.id);
     }
-
 
     @Override
     public int hashCode() {
@@ -142,12 +132,5 @@ public class Autor implements Serializable {
                 '}';
     }
 
-    //adicionar a assosiação do autor ao livro
-    public void addLivro(Livro livro) {
-        if(livros == null){
-            livros = new ArrayList<>();
 
-        }
-        livro.addAutor(this);
-    }
 }
