@@ -33,7 +33,7 @@ public class Emprestimo {
     private LocalDate dataDevolucao;
 
     @Column(name = "esta_emprestado")
-    @NotNull(message = "SIM OU NÂO")
+    @NotNull(message = "TRUE ou FALSE")
     private boolean estaEmprestado = false;
 
 
@@ -52,10 +52,10 @@ public class Emprestimo {
 
 
 
-    public Emprestimo(LocalDate dataEmprestimo, LocalDate dataDevolucao, boolean estaEmprestado) {
+    public Emprestimo(LocalDate dataEmprestimo, LocalDate dataDevolucao) {
         this.dataEmprestimo = dataEmprestimo;
         this.dataDevolucao = dataDevolucao;
-        this.estaEmprestado = estaEmprestado;
+
     }
 
       /*LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, EMPRESTIMO A LIVRO, E EMPRESTIMO A LEITOR)*/

@@ -131,6 +131,4 @@ public class Autor {
                 ", cidade='" + cidade + '\'' +
                 '}';
     }
-
-
 }

@@ -20,8 +20,6 @@ public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @NotNull
-
     private Integer id;
 
     @Column(name = "nome_categoria")
@@ -33,8 +31,10 @@ public class Categoria {
     @JsonBackReference
     private List<Livro> listaLivrosRelacionados = new ArrayList<>();
 
-
-
+    //Construtor padrão para categoria
+    public Categoria(String nomeCategoria) {
+        this.nomeCategoria = nomeCategoria;
+    }
 
     //LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, CATEGORIA COM LIVROS)
 

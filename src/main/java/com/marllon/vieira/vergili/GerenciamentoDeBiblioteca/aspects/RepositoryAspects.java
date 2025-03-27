@@ -6,6 +6,7 @@ import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImp
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.CategoriaRepositoryImplement;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.EmprestimoRepositoryImplementation;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.repoImpl.LeitorRepositoryImplementation;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.EmprestimoRepository;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,9 +24,8 @@ import java.util.List;
 public class RepositoryAspects {
 
 
-
     @Before("com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.aspects.BibliotecaPointcutsAOP.MostrarLogsDosMetodosdeRepositorios())")
-    public void MostrarLogsDosMetodosdeRepositorios(JoinPoint joinPoint){
+    public void MostrarLogsDosMetodosdeRepositorios(JoinPoint joinPoint) {
         System.out.println(" =====>>> Executando algum método do pacote de Repositório");
 
         //display the method signature
@@ -37,38 +37,40 @@ public class RepositoryAspects {
         Object[] args = joinPoint.getArgs();
 
         //Loop sobre estes argumentos
-        for(Object tempArgs: args){
+        for (Object tempArgs : args) {
             System.out.println(tempArgs);
 
-            if(tempArgs instanceof AutorRepositoryImplement){
+            if (tempArgs instanceof AutorRepositoryImplement) {
                 AutorRepositoryImplement autorRepositoryImplement = (AutorRepositoryImplement) joinPoint;
                 System.out.println("Acionado autor: " + autorRepositoryImplement.getClass());
 
-            } else if (tempArgs instanceof EmprestimoRepositoryImplementation) {
+            } else if (tempArgs instanceof EmprestimoRepository) {
                 EmprestimoRepositoryImplementation emprestimoRepository = (EmprestimoRepositoryImplementation) joinPoint;
                 System.out.println("Acionado emprestimo: " + emprestimoRepository.getClass());
-            }
-            else if (tempArgs instanceof LeitorRepositoryImplementation) {
+            } else if (tempArgs instanceof LeitorRepositoryImplementation) {
                 LeitorRepositoryImplementation leitorRepositoryImplementation = (LeitorRepositoryImplementation) joinPoint;
                 System.out.println("Acionado leitor: " + leitorRepositoryImplementation.getClass());
-            }
-            else if (tempArgs instanceof CategoriaRepositoryImplement) {
+            } else if (tempArgs instanceof CategoriaRepositoryImplement) {
                 CategoriaRepositoryImplement categoriaRepositoryImplement = (CategoriaRepositoryImplement) joinPoint;
                 System.out.println("Acionado categoria: " + categoriaRepositoryImplement.getClass());
             }
         }
+
+
+
+        @AfterReturning(value = "execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor.*(..))"
+                ,returning = "autorDataReturning")
+        public void RetornarTodosOsAutores (JoinPoint theJoinPoint, List < Autor > autorDataReturning){
+
+            String method = theJoinPoint.getSignature().toShortString();
+            System.out.println(" =====>>> Executando o metodo depois do retorno dele: " + method);
+
+            System.out.println("========>>> resultado é: " + autorDataReturning);
+
+
+        }
     }
 }
-
-
-    @AfterReturning(value = "execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor.*(..))",
-            returning = "autorDataReturning")
-    public void RetornarTodosOsAutores(JoinPoint theJoinPoint, List<Autor> autorDataReturning){
-
-String method = theJoinPoint.getSignature().toShortString();
-        System.out.println(" =====>>> Executando o metodo depois do retorno dele: " + method);
-
-        System.out.println("========>>> resultado é: " + autorDataReturning);
 
 
 

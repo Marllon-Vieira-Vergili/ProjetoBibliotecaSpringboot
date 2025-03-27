@@ -1,4 +1,4 @@
-package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services;
+package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services.interfaces;
 
 
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.AutorRequestDTO;
@@ -21,11 +21,12 @@ public interface AutorService {
     Optional<AutorResponseDTO> listarAutorPorId(Integer id);
 
     //Salvar
-    AutorRequestDTO salvarAutor(AutorRequestDTO autor);
+    AutorResponseDTO salvarAutor(AutorRequestDTO autor);
 
 
     //Atualizar
-    void atualizarAutor(Integer id, AutorRequestDTO autor);
+    AutorResponseDTO atualizarAutor(Integer id, AutorRequestDTO autor); //Vai me retornar a resposta do corpo
+    //do autor, para que o usuário veja a mudança
 
 
     //Deletar

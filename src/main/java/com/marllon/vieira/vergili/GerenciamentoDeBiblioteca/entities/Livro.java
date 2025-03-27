@@ -2,6 +2,7 @@ package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -26,14 +27,14 @@ public class Livro {
     private Integer id;
 
 
-    @NotNull
+    @NotBlank(message = "O nome do livro não pode estar em branco!")
     @Size(min = 5, max = 50)
     @Column(name = "nome")
     private String nome;
 
-    @NotNull
+    @NotNull(message = "O ano de Lançamento não pode ser nulo!")
     @Column(name = "ano_lancamento")
-    private int anoLancamento;
+    private Integer anoLancamento;
 
     //muitos livros pode ter um autor
     @ManyToOne(fetch = FetchType.LAZY)
@@ -65,7 +66,7 @@ public class Livro {
 
 
 
-    public Livro(String nome, int anoLancamento) {
+    public Livro(String nome, Integer anoLancamento) {
         this.nome = nome;
         this.anoLancamento = anoLancamento;
 
