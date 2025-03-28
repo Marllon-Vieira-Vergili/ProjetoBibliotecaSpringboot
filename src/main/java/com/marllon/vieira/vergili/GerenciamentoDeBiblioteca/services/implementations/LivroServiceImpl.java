@@ -18,9 +18,7 @@ public class LivroServiceImpl implements LivroService {
     @Override
     public Iterable<LivroResponseDTO> listarTodosLivros() {
         return livroRepository.findAll().stream().map(livro -> new LivroResponseDTO(livro.getId(),
-                livro.getNome(), livro.getAnoLancamento(),livro.getAutorRelacionado(),
-                livro.getListaLeitoresRelacionados(),livro.getListaEmprestimosRelacionados(),
-                livro.getListaLivrosComCategoria())).toList();
+                livro.getNome(), livro.getAnoLancamento())).toList();
     }
 
     @Override
@@ -28,9 +26,7 @@ public class LivroServiceImpl implements LivroService {
         Livro livroencontrado = livroRepository.findById(id).orElseThrow(() ->
                 new NoSuchElementException("Nenhum livro encontrado com essa id!"));
         return new LivroResponseDTO(livroencontrado.getId(),
-                livroencontrado.getNome(),livroencontrado.getAnoLancamento(), livroencontrado.getAutorRelacionado(),
-                livroencontrado.getListaLeitoresRelacionados(),livroencontrado.getListaEmprestimosRelacionados(),
-                livroencontrado.getListaLivrosComCategoria());
+                livroencontrado.getNome(),livroencontrado.getAnoLancamento());
     }
 
     @Override
@@ -44,9 +40,7 @@ public class LivroServiceImpl implements LivroService {
 
         //Converter os dados do livro para retornoemDTO para o usuário vizualizar
 
-        return new LivroResponseDTO(novoLivro.getId(), novoLivro.getNome(), novoLivro.getAnoLancamento(),
-                novoLivro.getAutorRelacionado(), novoLivro.getListaLeitoresRelacionados(),
-                novoLivro.getListaEmprestimosRelacionados(), novoLivro.getListaLivrosComCategoria());
+        return new LivroResponseDTO(novoLivro.getId(), novoLivro.getNome(), novoLivro.getAnoLancamento());
     }
 
     @Override
@@ -65,9 +59,7 @@ public class LivroServiceImpl implements LivroService {
 
         //Retornar o novo Livro em mensagem para o DTO
         return new LivroResponseDTO(livroEncontrado.getId(), livroEncontrado.getNome(),
-                livroEncontrado.getAnoLancamento(), livroEncontrado.getAutorRelacionado(),
-                livroEncontrado.getListaLeitoresRelacionados(),livroEncontrado.getListaEmprestimosRelacionados(),
-                livroEncontrado.getListaLivrosComCategoria());
+                livroEncontrado.getAnoLancamento());
     }
 
 

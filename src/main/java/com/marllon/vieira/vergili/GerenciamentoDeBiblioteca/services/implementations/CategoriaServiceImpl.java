@@ -1,9 +1,6 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services.implementations;
-
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.CategoriaRequestDTO;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.AutorResponseDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.CategoriaResponseDTO;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Categoria;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.CategoriaRepository;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services.interfaces.CategoriaService;
@@ -12,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoriaServiceImpl implements CategoriaService {
@@ -25,7 +21,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Override
     public Iterable<CategoriaResponseDTO> listarTodasCategorias() {
         return categoriaRepository.findAll().stream().map(categoria -> new CategoriaResponseDTO
-                (categoria.getId(), categoria.getNomeCategoria(), categoria.getListaLivrosRelacionados())).toList();
+                (categoria.getId(), categoria.getNomeCategoria())).toList();
         /*Retornar e encontrar todos, dividindo por arrays, mapeando uma categoria para uma nova resposta
             através do record CategoriaResponseDTO, na qual vai pegar a id, nome e lista de livros relacionados, e devolver
             em uma lista, e depois converter para uma lista de categoriaResponseDTO
@@ -39,7 +35,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         Optional<Categoria> categoriaEncontrada = categoriaRepository.findById(id);
 
         return categoriaEncontrada.map(categoria -> new CategoriaResponseDTO(categoria.getId(),
-                categoria.getNomeCategoria(), categoria.getListaLivrosRelacionados())).orElse(null);
+                categoria.getNomeCategoria())).orElse(null);
     }
 
     @Override
@@ -52,7 +48,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
         //Retornar ao usuário, a nova categoria salva
         return new CategoriaResponseDTO(novaCategoria.getId(),
-                novaCategoria.getNomeCategoria(), novaCategoria.getListaLivrosRelacionados());
+                novaCategoria.getNomeCategoria());
     }
 
     @Override
@@ -67,8 +63,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         //Salvar os dados atualizados no banco de dados
         categoriaRepository.save(categoriaEncontrada);
 
-        return new CategoriaResponseDTO(categoriaEncontrada.getId(), categoriaEncontrada.getNomeCategoria(),
-                categoriaEncontrada.getListaLivrosRelacionados());
+        return new CategoriaResponseDTO(categoriaEncontrada.getId(), categoriaEncontrada.getNomeCategoria());
     }
 
     @Override

@@ -21,9 +21,7 @@ public class LeitorServiceImpl implements LeitorService {
     public Iterable<LeitorResponseDTO> listarTodosOsLeitores() {
         //Retornar o leitor.encontrar todos, dividindo, em um mapa de leitor, que esse novo leitor vai receber um dto, para lista
         return leitorRepository.findAll().stream().map(leitor -> new LeitorResponseDTO
-                (leitor.getId(), leitor.getNome(),leitor.getSobrenome(), leitor.getEmail(), leitor.getIdade(),
-                        leitor.getListaLivrosRelacionadosAoLeitor(),
-                        leitor.getListaEmprestimosRelacionadosAoLeitor())).toList();
+                (leitor.getId(), leitor.getNome(),leitor.getSobrenome(), leitor.getEmail(), leitor.getIdade())).toList();
     }
 
     @Override
@@ -32,9 +30,7 @@ public class LeitorServiceImpl implements LeitorService {
         Leitor leitorEncontrado = leitorRepository.findById(id).orElseThrow(() ->
                 new NoSuchElementException("Nenhum leitor encontrado com essa id!"));
         return new LeitorResponseDTO(leitorEncontrado.getId(), leitorEncontrado.getNome(),
-                leitorEncontrado.getSobrenome(), leitorEncontrado.getEmail(), leitorEncontrado.getIdade(),
-                leitorEncontrado.getListaLivrosRelacionadosAoLeitor(),
-                leitorEncontrado.getListaEmprestimosRelacionadosAoLeitor());
+                leitorEncontrado.getSobrenome(), leitorEncontrado.getEmail(), leitorEncontrado.getIdade());
     }
 
     @Override
@@ -49,8 +45,7 @@ public class LeitorServiceImpl implements LeitorService {
 
         //Retornar o novo leitor para o usuário pelo leitorDTO
         return new LeitorResponseDTO(novoLeitor.getId(), novoLeitor.getNome(),
-                novoLeitor.getSobrenome(), novoLeitor.getEmail(), novoLeitor.getIdade(),
-                novoLeitor.getListaLivrosRelacionadosAoLeitor(), novoLeitor.getListaEmprestimosRelacionadosAoLeitor());
+                novoLeitor.getSobrenome(), novoLeitor.getEmail(), novoLeitor.getIdade());
     }
 
     @Override
@@ -72,8 +67,7 @@ public class LeitorServiceImpl implements LeitorService {
         //Retornar em uma nova resposta pelo DTO, o cabeçalho dos dados atualizado do leitor
         return new LeitorResponseDTO(leitorASerAtualizado.getId(), leitorASerAtualizado.getNome(),
                 leitorASerAtualizado.getSobrenome(), leitorASerAtualizado.getEmail(),
-                leitorASerAtualizado.getIdade(),  leitorASerAtualizado.getListaLivrosRelacionadosAoLeitor(),
-                leitorASerAtualizado.getListaEmprestimosRelacionadosAoLeitor());
+                leitorASerAtualizado.getIdade());
     }
 
     @Override

@@ -24,8 +24,8 @@ public class AutorServiceImpl implements AutorService {
 
 
         return autorRepository.findAll().stream().map(autores -> new AutorResponseDTO(autores.getId(),
-                autores.getNome(), autores.getEmail(), autores.getTelefone(), autores.getCidade(),
-                autores.getListaLivrosDosAutores())).collect(Collectors.toList());
+                autores.getNome(), autores.getEmail(), autores.getTelefone(), autores.getCidade()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -37,8 +37,7 @@ public class AutorServiceImpl implements AutorService {
         //Converter os dados encontrados para retornar em uma DTO para o usuário vizualizar, que é o retorno do método
         return autorEncontradoPelaId.map(autor -> Optional.of(new AutorResponseDTO(autor.getId(),
                 autor.getNome(), autor.getEmail(),
-                autor.getTelefone(), autor.getCidade(),
-                autor.getListaLivrosDosAutores()))).orElse(null);
+                autor.getTelefone(), autor.getCidade()))).orElse(null);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class AutorServiceImpl implements AutorService {
                 autorNovo.getNome(),
                 autorNovo.getEmail(),
                 autorNovo.getTelefone(),
-                autorNovo.getCidade(), autorNovo.getListaLivrosDosAutores());
+                autorNovo.getCidade());
     }
 
     @Override
@@ -73,8 +72,7 @@ Autor autorLocalizado = (autorRepository.findById(id).orElseThrow(() -> new NoSu
        autorRepository.save(autorLocalizado);
 
        return new AutorResponseDTO(autorLocalizado.getId(), autorLocalizado.getNome(),
-               autorLocalizado.getEmail(), autorDTO.telefone(), autorLocalizado.getCidade(),
-               autorLocalizado.getListaLivrosDosAutores());
+               autorLocalizado.getEmail(), autorDTO.telefone(), autorLocalizado.getCidade());
     }
 
 

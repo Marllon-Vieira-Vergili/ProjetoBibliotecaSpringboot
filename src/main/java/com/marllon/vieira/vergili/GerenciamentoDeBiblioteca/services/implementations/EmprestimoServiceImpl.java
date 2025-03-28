@@ -22,8 +22,7 @@ public class EmprestimoServiceImpl implements EmprestimoService {
 
         return emprestimoRepository.findAll().stream().map(emprestimo -> new
                 EmprestimoResponseDTO(emprestimo.getId(),emprestimo.getDataEmprestimo(),
-                emprestimo.getDataDevolucao(), emprestimo.isEstaEmprestado(),
-                emprestimo.getListaLivrosEmprestados(),emprestimo.getListaLeitoresComEmprestimos())).toList();
+                emprestimo.getDataDevolucao(), emprestimo.isEstaEmprestado())).toList();
 
     }
 
@@ -35,8 +34,7 @@ public class EmprestimoServiceImpl implements EmprestimoService {
 
         return new EmprestimoResponseDTO(emprestimoEncontrado.getId(),
                 emprestimoEncontrado.getDataEmprestimo(), emprestimoEncontrado.getDataDevolucao(),
-                emprestimoEncontrado.isEstaEmprestado(), emprestimoEncontrado.getListaLivrosEmprestados(),
-                emprestimoEncontrado.getListaLeitoresComEmprestimos());
+                emprestimoEncontrado.isEstaEmprestado());
     }
 
     @Override
@@ -50,8 +48,7 @@ public class EmprestimoServiceImpl implements EmprestimoService {
 
         //Retornar o novo empréstimo salvo para o usuário
         return new EmprestimoResponseDTO(novoEmprestimo.getId(), novoEmprestimo.getDataEmprestimo(),
-                novoEmprestimo.getDataDevolucao(), novoEmprestimo.isEstaEmprestado(),
-                novoEmprestimo.getListaLivrosEmprestados(), novoEmprestimo.getListaLeitoresComEmprestimos());
+                novoEmprestimo.getDataDevolucao(), novoEmprestimo.isEstaEmprestado());
     }
 
     @Override
@@ -70,8 +67,7 @@ public class EmprestimoServiceImpl implements EmprestimoService {
 
         return new EmprestimoResponseDTO(emprestimoEncontrado.getId(),
                 emprestimoEncontrado.getDataEmprestimo(), emprestimoEncontrado.getDataDevolucao(),
-                emprestimoEncontrado.isEstaEmprestado(), emprestimoEncontrado.getListaLivrosEmprestados(),
-                emprestimoEncontrado.getListaLeitoresComEmprestimos());
+                emprestimoEncontrado.isEstaEmprestado());
 
     }
 
