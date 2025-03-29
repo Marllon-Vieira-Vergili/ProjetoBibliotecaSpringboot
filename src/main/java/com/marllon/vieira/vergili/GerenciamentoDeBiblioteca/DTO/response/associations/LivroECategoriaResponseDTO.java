@@ -1,8 +1,8 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.CategoriaResponseDTO;
+
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Livro;
 
 import java.util.List;
 
-public record LivroECategoriaResponseDTO(Integer id, String nome, Integer anoLancamento,
-                                         List<CategoriaResponseDTO> listaLivrosComCategoria) {
+public record LivroECategoriaResponseDTO(List<Livro> listaLivros,Integer categoriaId, String nomeCategoria) {
 }

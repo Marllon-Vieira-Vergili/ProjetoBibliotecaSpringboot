@@ -17,4 +17,17 @@ public interface Autor_Livros {
 
     //Associar livro a autor
     List<LivroEAutorResponseDTO> associarLivrosAUmAutor(LivroEAutorRequestDTO livroEAutorRequestDTO);
+
+    //Encontrar autor associado a seus livros
+    List<AutorELivrosResponseDTO> encontrarAutorESeusLivrosAssociados(Integer id);
+
+    //Encontrar autor associado a um livro
+
+    //Deletar um livro associado ao autor
+
+    //Deletar um autor associado a um livro
+
+    //atualizar autor associado ao livro
+
+    //atualizar livro associado ao autor
 }
