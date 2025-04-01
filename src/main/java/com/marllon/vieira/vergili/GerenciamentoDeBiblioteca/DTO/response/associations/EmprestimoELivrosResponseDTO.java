@@ -7,5 +7,5 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record EmprestimoELivrosResponseDTO(Integer id, LocalDate dataEmprestimo, LocalDate dataDevolucao,
-                                           boolean estaEmprestado, List<LivroResponseDTO> listaLivrosEmprestados) {
+                                           boolean estaEmprestado, List<LivroResponseDTO> LivroEmprestados) {
 }

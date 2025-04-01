@@ -17,4 +17,7 @@ public interface Leitores_Livros {
 
     //Associar Livros a leitores
     LivroComLeitorResponseDTO associarLivroAUmLeitor(LivroComLeitorRequestDTO livroComLeitorRequestDTO);
+
+    //Encontrar livros relacionados com leitores
+    LeitorComLivroResponseDTO encontrarLeitorComLivroRelacionado(Integer id);
 }

@@ -3,6 +3,7 @@ import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.Emprest
 
 import java.util.List;
 
-public record LeitorComEmprestimoResponseDTO(Integer id, String nome, String sobrenome, String email,
-                                             Integer idade, List<EmprestimoResponseDTO> listaEmprestimosRelacionadosAoLeitor) {
+public record LeitorComEmprestimoResponseDTO(List<EmprestimoResponseDTO> listaEmprestimosRelacionadosAoLeitor,
+                                             Integer id, String nome, String sobrenome, String email,
+                                             Integer idade) {
 }

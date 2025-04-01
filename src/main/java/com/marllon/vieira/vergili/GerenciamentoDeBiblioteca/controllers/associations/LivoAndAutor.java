@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/autorLivros")
-public class LivoAndAutorBidirecionalController {
+@RequestMapping(value = "/api/autor-livro")
+public class LivoAndAutor {
 
 
     @Autowired

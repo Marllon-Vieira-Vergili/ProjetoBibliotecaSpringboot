@@ -2,7 +2,7 @@ package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services.interfaces
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.associations.EmprestimoELivrosRequestDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.associations.LivrocomEmprestimosRequestDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.EmprestimoELivrosResponseDTO;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.LivrocomEmprestimosResponseDTO;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.LivroComEmprestimoResponseDTO;
 
 
 public interface Emprestimo_Livros {
@@ -14,5 +14,8 @@ public interface Emprestimo_Livros {
 
 
     //Associar livros a emprestimos
-    LivrocomEmprestimosResponseDTO associarLivrosAEmprestimo(LivrocomEmprestimosRequestDTO livrocomEmprestimosRequestDTO);
+    LivroComEmprestimoResponseDTO associarLivrosAEmprestimo(LivrocomEmprestimosRequestDTO livrocomEmprestimosRequestDTO);
+
+    //Encontrar um livro associado a um empréstimo
+    LivroComEmprestimoResponseDTO encontrarLivroComEmprestimo(Integer id);
 }

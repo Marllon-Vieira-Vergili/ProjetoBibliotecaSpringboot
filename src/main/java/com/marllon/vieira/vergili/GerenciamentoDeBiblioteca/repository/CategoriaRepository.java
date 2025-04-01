@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
     //Métodos que serão instanciados nos nossos Services Implementações, das lógicas;
+
+
 }

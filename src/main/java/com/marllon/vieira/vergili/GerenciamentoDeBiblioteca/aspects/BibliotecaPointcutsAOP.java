@@ -30,23 +30,18 @@ public class BibliotecaPointcutsAOP {
     }
 
     //Pointcut para mostrar os logs dos métodos de Repositórios
-    @Pointcut("execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repositories.*.*(..))")
+    @Pointcut("execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.*.*(..))")
     public void MostrarLogsDosMetodosdeRepositorios() {
     }
 
     //Pointcut para mostrar os logs dos métodos de Rest Controllers
-    @Pointcut("execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.restControllers.*.*(..))")
+    @Pointcut("execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.controllers.*.*(..))")
     public void MostrarLogsDosMetodosdeRestControllers() {
     }
 
-    //Pointcut para mostrar os logs dos métodos de testes
-    @Pointcut("execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.testing.*.*(..))")
-    public void MostrarLogsDosMetodosdeTestes() {
-    }
-
     //Pointcut para mostrar os logs dos métodos de DTO
-    @Pointcut("execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.dto.*.*(..))")
-    public void MostrarLogsDosMetodosDPO(){
+    @Pointcut("execution(* com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.*.*(..))")
+    public void MostrarLogsDosMetodosDTO(){
     }
 }
 

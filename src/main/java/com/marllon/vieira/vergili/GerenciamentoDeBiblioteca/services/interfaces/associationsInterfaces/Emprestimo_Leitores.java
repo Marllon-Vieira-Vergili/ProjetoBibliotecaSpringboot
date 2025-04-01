@@ -16,4 +16,10 @@ public interface Emprestimo_Leitores {
 
     //Associar leitores a Empréstimos
     LeitorComEmprestimoResponseDTO associarLeitorAEmprestimo(LeitorComEmprestimoRequestDTO leitorComEmprestimoRequestDTO);
+
+    //Encontrar empréstimo de um leitor
+    EmprestimoELeitoresResponseDTO encontrarEmprestimoDeLeitor(Integer id);
+
+    //Encontrar leitores de um empréstimo
+
 }

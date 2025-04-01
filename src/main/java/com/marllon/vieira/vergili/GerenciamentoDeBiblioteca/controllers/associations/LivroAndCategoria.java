@@ -9,11 +9,12 @@ import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services.interfaces.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/categoriaLivros")
-public class LivroAndCategoriaBidirecionalController {
+@RequestMapping(value = "/api/livros-categoria")
+public class LivroAndCategoria {
 
     @Autowired
     private Categoria_Livros categoriaLivros;
@@ -28,8 +29,13 @@ public class LivroAndCategoriaBidirecionalController {
     @PostMapping(value = "/associarLivrosACategoria")
     public List<LivroECategoriaResponseDTO> associarLivrosACategoria
             (@RequestBody LivroECategoriaRequestDTO livroECategoriaRequestDTO){
-        return categoriaLivros.associarLivroACategoria(livroECategoriaRequestDTO);
+        return Collections.singletonList(categoriaLivros.associarLivroACategoria(livroECategoriaRequestDTO));
 
+    }
+
+    @GetMapping(value = "/encontrarCategoriaElivrosAssociados/{id}")
+    public List<LivroECategoriaResponseDTO> encontrarCategoriaELivrosAssociados(@PathVariable Integer id){
+        return categoriaLivros.encontrarCategoriaElivrosAssociados(id);
     }
 
 }

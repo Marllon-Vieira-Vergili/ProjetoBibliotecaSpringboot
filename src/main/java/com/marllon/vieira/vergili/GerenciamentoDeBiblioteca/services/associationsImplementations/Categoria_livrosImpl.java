@@ -2,6 +2,7 @@ package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.services.associatio
 
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.associations.CategoriaELivrosRequestDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.associations.LivroECategoriaRequestDTO;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.CategoriaResponseDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.LivroResponseDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.CategoriaELivrosResponseDTO;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.LivroECategoriaResponseDTO;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
 
 
 @Service
@@ -54,25 +56,57 @@ public class Categoria_livrosImpl implements Categoria_Livros {
                 categoriaEncontrada.getNomeCategoria(), livrosDaCategoriaDTO);
     }
 
+
     @Override
-    public List<LivroECategoriaResponseDTO> associarLivroACategoria(LivroECategoriaRequestDTO livroECategoriaRequestDTO) {
+    public LivroECategoriaResponseDTO associarLivroACategoria(LivroECategoriaRequestDTO livroECategoriaRequestDTO) {
 
-        //Encontrando a id dos livros
-        List<Livro> livrosEncontrados = livroRepository.findAllById(livroECategoriaRequestDTO.livrosId());
+        //Encontrar a ID da categoria
+        Categoria categoriaEncontrada = categoriaRepository.findById(livroECategoriaRequestDTO.categoriaId())
+                .orElseThrow(() -> new NoSuchElementException("Nenhuma categoia encontrada com essa id!"));
+        //Encontrar o livro
+        List<Livro> livroEncontrado = livroRepository.findAllById(livroECategoriaRequestDTO.livroId());
 
-        //Encontrando a id da categoria que será associada
-        Optional<Categoria> categoriaEncontrada = categoriaRepository.findById(livroECategoriaRequestDTO.categoriaId());
+        //Mapear o livro para converter em DTO
+        List<LivroResponseDTO> livroResponseDTO = livroEncontrado.stream()
+                .map(livro -> new LivroResponseDTO(livro.getId(),livro.getNome(),
+                        livro.getAnoLancamento())).toList();
 
-        //associando os livros a categoria
-        livrosEncontrados.forEach(livro -> livro.associarLivroACategoria(categoriaEncontrada.orElseThrow(() ->
-                new NoSuchElementException("Nenhuma Categoria foi encontrada!"))));
 
-        //salvando a categoria aos livros
-        livroRepository.saveAll(livrosEncontrados);
 
-        //Retornando a resposta do usuário no cabeçalho, para ele ver como foi salvo as assosiações
-        return Collections.singletonList(new LivroECategoriaResponseDTO(livrosEncontrados,
-                livroECategoriaRequestDTO.categoriaId(), categoriaEncontrada.get().getNomeCategoria()));
+        //Retornar a resposta DTO para o usuário vizualizar
+        return new LivroECategoriaResponseDTO(livroResponseDTO,
+                categoriaEncontrada.getId(), categoriaEncontrada.getNomeCategoria());
+    }
+
+
+    @Override
+    public List<LivroECategoriaResponseDTO> encontrarCategoriaElivrosAssociados
+            (Integer id) {
+
+        //Encontrar a id da categoria
+        Categoria categoriaEncontrada = categoriaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Nenhuma categoria encontrada com essa id!"));
+
+        //Encontrar a lista de livros, contidos nesta id da categoria
+        List<Livro> livrosContidosNaCategoria = categoriaEncontrada.getListaLivrosRelacionados();
+
+        if(categoriaEncontrada.getListaLivrosRelacionados().isEmpty()){
+            throw new NoSuchElementException("Não há livros nesta categoria!");
+        }
+
+
+        //Mapear e convertê-lo para DTO response
+            List<LivroResponseDTO> livrosResponseDto = livrosContidosNaCategoria.stream().map(livro ->
+                    new LivroResponseDTO(livro.getId(), livro.getNome(), livro.getAnoLancamento())).toList();
+
+
+        //Retornar a lista para o usuário
+
+        return Collections.singletonList((new LivroECategoriaResponseDTO(livrosResponseDto,
+                categoriaEncontrada.getId(), categoriaEncontrada.getNomeCategoria())));
 
     }
 }
+
+
+

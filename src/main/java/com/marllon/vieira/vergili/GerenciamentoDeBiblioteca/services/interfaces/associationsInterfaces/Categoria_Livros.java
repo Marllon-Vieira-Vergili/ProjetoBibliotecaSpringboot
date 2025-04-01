@@ -14,9 +14,10 @@ public interface Categoria_Livros {
     CategoriaELivrosResponseDTO associarCategoriaALivro(CategoriaELivrosRequestDTO categoriaELivrosRequestDTO);
 
     //Associar livro a Categoria
-    List<LivroECategoriaResponseDTO> associarLivroACategoria(LivroECategoriaRequestDTO livroECategoriaRequestDTO);
+    LivroECategoriaResponseDTO associarLivroACategoria(LivroECategoriaRequestDTO livroECategoriaRequestDTO);
 
     //Encontrar uma categoria e seus livros associados
+    public List<LivroECategoriaResponseDTO> encontrarCategoriaElivrosAssociados(Integer id);
 
     //Encontrar livros associados a uma categoria
 

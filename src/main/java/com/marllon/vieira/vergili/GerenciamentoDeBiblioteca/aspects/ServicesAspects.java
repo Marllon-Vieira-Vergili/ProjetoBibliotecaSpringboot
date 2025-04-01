@@ -20,11 +20,17 @@ public class ServicesAspects {
         String method = joinPoint.getSignature().toShortString();
         System.out.println("Método sendo executado: " + method);
 
+        /*
         //exibir os argumentos dos métodos
         Object[] args = joinPoint.getArgs();
         for(Object tempArgs: args){
             System.out.println(tempArgs);
+
+            if (tempArgs instanceof Livro){
+                Livro theLivro = (Livro) tempArgs;)
         }
+
+         */
     }
 }
 
