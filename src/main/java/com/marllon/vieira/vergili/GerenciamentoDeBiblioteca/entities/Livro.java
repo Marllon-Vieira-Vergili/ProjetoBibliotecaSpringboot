@@ -30,7 +30,7 @@ public class Livro {
     @NotBlank(message = "O nome do livro não pode estar em branco!")
     @Size(min = 5, max = 50)
     @Column(name = "nome")
-    private String nome;
+    private String titulo;
 
     @NotNull(message = "O ano de Lançamento não pode ser nulo!")
     @Column(name = "ano_lancamento")
@@ -66,8 +66,8 @@ public class Livro {
 
 
 
-    public Livro(String nome, Integer anoLancamento) {
-        this.nome = nome;
+    public Livro(String titulo, Integer anoLancamento) {
+        this.titulo = titulo;
         this.anoLancamento = anoLancamento;
 
     }
@@ -137,7 +137,7 @@ public class Livro {
     public String toString() {
         return "Livro{" +
                 "id=" + id +
-                ", nome='" + nome + '\'' +
+                ", titulo='" + titulo + '\'' +
                 ", anoLancamento=" + anoLancamento +
                 '}';
     }
