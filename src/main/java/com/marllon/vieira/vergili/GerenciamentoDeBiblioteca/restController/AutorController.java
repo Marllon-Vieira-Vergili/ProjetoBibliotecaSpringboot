@@ -1,7 +1,7 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.restController;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.AutorRequest;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.associations.AutorRequestComLivro;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.AutorComLivroResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestEntity.AutorRequest;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestAssociation.AutorRequestComLivro;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseAssociation.AutorComLivroResponse;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.associationInterfaces.AutorAssociationLivroService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/autor")
-@Tag(name = "Autor e livro associações")
+@Tag(name = "Autor", description = "Endpoints para gerenciamento de Autores")
 public class AutorController {
 
     @Autowired

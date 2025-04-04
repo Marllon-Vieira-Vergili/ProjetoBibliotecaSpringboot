@@ -1,13 +1,18 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.entityImplementations;
 
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.LivroRequest;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.LivroResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestEntity.LivroRequest;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Leitor;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Livro;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.LivroRepository;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.entityInterfaces.LivroService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+
+@Service
 public class LivroServiceImpl implements LivroService {
 
 @Autowired
@@ -47,14 +52,62 @@ private LivroRepository livroRepository;
         //Salxar o livro
         livroRepository.save(novoLivro);
 
-
         //Retornar o livro
         return novoLivro;
     }
 
 
-    //Método customizado para encontrar o livro pelo Título
-    public Livro encontrarPeloTitulo(LivroRequest livroRequest){
-        return livroRepository.findByTitulo(livroRequest.titulo());
+    @Override
+    public Livro encontrarLivroPorId(Integer id) {
+        return livroRepository.findById(id).orElseThrow(() -> new
+                NoSuchElementException("Nenhum livro encontrado com essa id!"));
+    }
+
+    @Override
+    public List<Livro> encontrarTodosLivros() {
+        return livroRepository.findAll();
+    }
+
+    @Override
+    public List<Livro> encontrarLivroPorTitulo(String titulo) {
+
+        //Encontrar os livros pelo titulo
+        List<Livro> listaLivro = livroRepository.findByTitulo(titulo);
+
+        //Verificar, quando tiver 2 nomes iguais, ele deverá retornar os 2 resultados, ou mais.
+        for(Livro livroPercorrido: listaLivro){
+            if(livroPercorrido.getTitulo().equals(titulo)){
+                try{
+                    return livroRepository.findByTitulo(titulo);
+                }catch (Exception e){
+                    throw new NoSuchElementException("Não foi encontrado nenhum livro com esse nome no banco de dados!");
+                }
+            }
+        }
+        return listaLivro;
+    }
+
+    @Override
+    public void atualizarLivro(Integer id, LivroRequest livroRequest) {
+
+        //Procurar o livro pela id
+        Livro livroEncontrado = livroRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("Nenhum livro encontrado com essa id!"));
+
+        //Alterar os dados do livro
+        livroEncontrado.setTitulo(livroRequest.titulo());
+        livroEncontrado.setAnoLancamento(livroRequest.anoLancamento());
+
+        //salvar o livro
+        livroRepository.save(livroEncontrado);
+    }
+
+
+    @Override
+    public void deletarLivro(Integer id) {
+        if (!livroRepository.existsById(id)) {
+            throw new NoSuchElementException("Nenhum livro encontrado com este ID!");
+        }
+        livroRepository.deleteById(id);
     }
 }

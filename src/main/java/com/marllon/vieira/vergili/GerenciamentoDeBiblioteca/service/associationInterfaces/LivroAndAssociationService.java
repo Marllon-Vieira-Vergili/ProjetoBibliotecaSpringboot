@@ -1,8 +1,8 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.associationInterfaces;
 
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.LivroRequest;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.associations.LivroRequestComAutor;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.LivroComAutorResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestAssociation.LivroRequestComAutor;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseAssociation.LivroAssociationsResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseAssociation.LivroComAutorResponse;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Livro;
 
 import java.util.List;
@@ -13,9 +13,8 @@ public interface LivroAndAssociationService {
     LivroComAutorResponse criarLivroComAutor(LivroRequestComAutor livroRequestComAutor); //usado na Api Rest
 
     //Ler
-    LivroComAutorResponse lerLivroComAutor(Integer id);
-    List<LivroComAutorResponse> lerTodosLivros();
-    //aqui ja ler um autor e seus livros relacionados
+    LivroAssociationsResponse encontarUmLivro(Integer id);
+    List<LivroAssociationsResponse> encontrarTodosLivros();
 
     //Atualizar
 

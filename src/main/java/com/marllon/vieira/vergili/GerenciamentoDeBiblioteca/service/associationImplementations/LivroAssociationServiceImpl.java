@@ -1,15 +1,12 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.associationImplementations;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.LivroRequest;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.associations.LivroRequestComAutor;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.AutorResponse;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.LivroResponse;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.LivroComAutorResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestEntity.LivroRequest;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestAssociation.LivroRequestComAutor;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseAssociation.LivroAssociationsResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseEntity.AutorResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseEntity.LivroResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseAssociation.LivroComAutorResponse;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Livro;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.AutorRepository;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.LivroRepository;
-
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.associationInterfaces.AutorAssociationLivroService;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.associationInterfaces.LivroAndAssociationService;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.entityInterfaces.AutorService;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.entityInterfaces.LivroService;
@@ -19,13 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class LivroAssociationServiceImpl implements LivroAndAssociationService {
 
-    @Autowired
-    private LivroRepository livroRepository;
 
     @Autowired
     private LivroService livroService;
@@ -34,26 +28,22 @@ public class LivroAssociationServiceImpl implements LivroAndAssociationService {
     private AutorService autorService;
 
 
+
+
     @Override
     @Transactional
     public LivroComAutorResponse criarLivroComAutor(LivroRequestComAutor livroRequestComAutor) {
 
-        //Criar um novo Livro, uando o método de criar livro acima pronto
+        //Criar um novo Livro, uando o método de criar livro
         Livro novoLivro = livroService.criarLivro(new LivroRequest(livroRequestComAutor.titulo(),
                 livroRequestComAutor.anoLancamento()));
 
         //criar o autor
         Autor novoAutor;
-        try{
             novoAutor = autorService.criarAutor(livroRequestComAutor.Autor());
-        }catch (RuntimeException e){
-            throw new RuntimeException("Erro ao criar o autor!");
-        }
-        //Associar o livro ao autor
-        novoLivro.associarLivroParaUmAutor(novoAutor);
 
-        //salvar o livro com o autor já associado
-        livroRepository.save(novoLivro);
+       //associar o livro ao autor
+        novoLivro.associarLivroParaUmAutor(novoAutor);
 
         //Converter os dados do autor, para sair ao usuário analisar
         List<LivroResponse> livroResponseList = Collections.singletonList(new LivroResponse(novoLivro.getId(),
@@ -63,23 +53,18 @@ public class LivroAssociationServiceImpl implements LivroAndAssociationService {
                 novoAutor.getEmail(), novoAutor.getTelefone(), novoAutor.getCidade());
 
         //retornar a resposta ao usuário do cabeçalho do autor
-        return new LivroComAutorResponse(livroResponseList, autorResponse);
+        return new LivroComAutorResponse(livroResponseList, (autorResponse));
     }
 
     @Override
-    public LivroComAutorResponse lerLivroComAutor(Integer id) {
-
-        //Procurar o livro pela id
-        Livro livroEncontrado = livroRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Nenhum livro encontrado com essa id!"));
+    public LivroAssociationsResponse encontarUmLivro(Integer id) {
         return null;
     }
 
     @Override
-    public List<LivroComAutorResponse> lerTodosLivros() {
+    public List<LivroAssociationsResponse> encontrarTodosLivros() {
         return List.of();
     }
-
 
 
 }

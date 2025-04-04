@@ -1,8 +1,8 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.associationInterfaces;
 
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.AutorRequest;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.associations.AutorRequestComLivro;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.AutorComLivroResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestEntity.AutorRequest;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestAssociation.AutorRequestComLivro;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseAssociation.AutorComLivroResponse;
 
 import java.util.List;
 

@@ -25,11 +25,11 @@ public class Emprestimo {
 
     @Getter
     @Column(name = "data_emprestimo")
-    @NotNull(message = "Digite a data do empréstimo")
+    //@NotNull(message = "Digite a data do empréstimo")
     private LocalDate  dataEmprestimo;
 
     @Column(name = "data_devolucao")
-    @NotNull(message = "Digite a data da devolução do livro")
+    //@NotNull(message = "Digite a data da devolução do livro")
     private LocalDate dataDevolucao;
 
     @Column(name = "esta_emprestado")

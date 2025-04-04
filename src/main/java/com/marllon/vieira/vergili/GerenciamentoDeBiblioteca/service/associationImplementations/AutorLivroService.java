@@ -1,13 +1,11 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.associationImplementations;
-
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.AutorRequest;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.associations.AutorRequestComLivro;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.AutorResponse;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.LivroResponse;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.associations.AutorComLivroResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestEntity.AutorRequest;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestAssociation.AutorRequestComLivro;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseEntity.AutorResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseEntity.LivroResponse;
+import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.response.responseAssociation.AutorComLivroResponse;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Autor;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Livro;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.AutorRepository;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.associationInterfaces.AutorAssociationLivroService;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.entityInterfaces.AutorService;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.entityInterfaces.LivroService;
@@ -20,8 +18,6 @@ import java.util.*;
 @Service
 public class AutorLivroService implements AutorAssociationLivroService {
 
-    @Autowired
-    private AutorRepository autorRepository;
 
     @Autowired
     private AutorService autorService;
@@ -39,14 +35,13 @@ public class AutorLivroService implements AutorAssociationLivroService {
         Autor novoAutor;
         try {
             novoAutor = autorService.criarAutor(new AutorRequest(autorRequestComLivro.nome(), autorRequestComLivro.email(),
-                    autorRequestComLivro.telefone(), autorRequestComLivro.telefone()));
+                    autorRequestComLivro.telefone(), autorRequestComLivro.cidade()));
 
         } catch (RuntimeException e) {
             throw new RuntimeException("Erro ao criar o autor: " + e.getMessage());
         }
 
-
-        //criar um livro
+        //criar um livro chamando o método criar livro
         Livro novoLivro;
         try{
             novoLivro = livroService.criarLivro(autorRequestComLivro.Livro());
@@ -62,8 +57,6 @@ public class AutorLivroService implements AutorAssociationLivroService {
             throw new RuntimeException("Erro ao associar o autor ao livro: " + e.getMessage());
         }
 
-        //Salvar o autor no banco de dados
-        autorRepository.save(novoAutor);
 
         //Mapear os dados do livro e autor criado para retornar em formato DTO ao usuário, para ele não ver todos
         //os dados irrelevantes
@@ -82,7 +75,8 @@ public class AutorLivroService implements AutorAssociationLivroService {
     public AutorComLivroResponse lerAutorPorId(Integer id) {
 
         //Informar a Id do autor que eu quero consultar
-        Optional<Autor> idAutorEncontrado = autorRepository.findById(id);
+
+        Optional<Autor> idAutorEncontrado = Optional.ofNullable(autorService.encontrarAutorPorId(id));
 
         //Se o autor não for encontrado.
         if(idAutorEncontrado.isEmpty()){
@@ -117,7 +111,7 @@ public class AutorLivroService implements AutorAssociationLivroService {
     public List<AutorComLivroResponse> lerTodosAutores() {
 
         // Encontrar todos os autores no banco de dados
-        List<Autor> autoresEncontrados = autorRepository.findAll();
+        List<Autor> autoresEncontrados = autorService.encontrarTodosAutores();
 
         // Mapear cada autor e seus livros associados para DTOs
         List<AutorComLivroResponse> autoresComLivros = autoresEncontrados.stream()
@@ -149,38 +143,10 @@ public class AutorLivroService implements AutorAssociationLivroService {
     public AutorComLivroResponse atualizarAutorComLivroAssociado(Integer id, AutorRequest autorRequest) {
 
         // Encontrar o autor que será atualizado pela id
-        Autor autorEncontrado = autorRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Nenhum autor encontrado com essa id!"));
+        Autor autorEncontrado = autorService.encontrarAutorPorId(id);
 
         //inserir os novos dados do autor, sem mexer nos livros já associados a ele
-        autorEncontrado.setNome(autorRequest.nome());
-        autorEncontrado.setEmail(autorRequest.email());
-        autorEncontrado.setTelefone(autorRequest.telefone());
-        autorEncontrado.setCidade(autorRequest.cidade());
-
-        //Verificar se os novos dados serão válidos
-        if (autorEncontrado.getNome() == null || autorEncontrado.getNome().isEmpty() || autorEncontrado.getNome().isBlank() || !autorEncontrado.getNome()
-                .matches("[a-zA-Z\\s]+")) {
-            throw new IllegalArgumentException("O nome do autor deve conter apenas letras e espaços!");
-        }
-
-        if (autorEncontrado.getEmail() == null || autorEncontrado.getEmail().isEmpty() || autorEncontrado.getEmail().isBlank() || !autorEncontrado.getEmail()
-                .matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
-            throw new IllegalArgumentException("O email do autor deve conter @!");
-        }
-
-        if (autorEncontrado.getTelefone() == null ||autorEncontrado.getTelefone().isEmpty() || autorEncontrado.getTelefone().isBlank() || !autorEncontrado.getTelefone()
-                .matches("\\d+")|| autorEncontrado.getTelefone().length() != 11) {
-            throw new IllegalArgumentException("O telefone do autor deve conter apenas números, com 11 digitos incluindo DDD padrão Brasileiro!!");
-        }
-
-        if (autorEncontrado.getCidade() == null ||autorEncontrado.getCidade().isEmpty() || autorEncontrado.getCidade().isBlank() || !autorEncontrado.getCidade()
-                .matches("[a-zA-Z\\s]+")) {
-            throw new IllegalArgumentException("A cidade do autor deve conter apenas caracteres e espaços!!");
-        }
-
-        //Se passar das condições e estiver certo, vamos salvar esse novo autor
-        autorRepository.save(autorEncontrado);
+        autorService.atualizarAutor(id, autorRequest);
 
         //mapear os dados do novo autor atualizado e converter da entidade autor para DTO
        AutorResponse autorResponse = new AutorResponse(autorEncontrado.getId(), autorEncontrado.getNome(),
@@ -199,16 +165,15 @@ public class AutorLivroService implements AutorAssociationLivroService {
     public AutorComLivroResponse deletarAutorELivrosAssociados(Integer id) {
 
         //Encontrar o autor pela sua id
-        Autor autorEncontrado = autorRepository.findById(id).orElseThrow(() ->
-                        new NoSuchElementException("Nenhum autor foi encontrado com essa id!"));
+        Autor autorEncontrado = autorService.encontrarAutorPorId(id);
 
         //verificar se há livros associados, pegar os livros do autor
         List<Livro> livrosAssociados = autorEncontrado.getListaLivrosDosAutores();
 
-        //Não preciso criar lógica pra remover os livros, pois ja associei no cascadeTYpe do autor para livros
+        //Não preciso criar lógica pra remover os livros, pois ja associei no cascadeType do autor para livros
 
         //remover o autor do banco de dados
-        autorRepository.delete(autorEncontrado);
+        autorService.deletarAutor(id);
 
         //Mapear os dados do autor removido, e seus livros também
         AutorResponse autorResponse = new AutorResponse(autorEncontrado.getId(), autorEncontrado.getNome(),

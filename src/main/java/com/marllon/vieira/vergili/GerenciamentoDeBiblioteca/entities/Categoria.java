@@ -14,7 +14,7 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Categoria {
+public class Categoria implements Comparable<Categoria>{
 
 
     @Id
@@ -70,14 +70,22 @@ public class Categoria {
                 '}';
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Categoria categoria)) return false;
+    public boolean equals(Object object) {
+        if (!(object instanceof Categoria categoria)) return false;
         return Objects.equals(id, categoria.id);
     }
 
+    //Comparar se os dois objetos serão iguais, com o mesmo código hash
     @Override
     public int hashCode() {
         return 0;
+    }
+
+    //Comparar as categorias
+    @Override
+    public int compareTo(Categoria outraCategoria) {
+        return this.nomeCategoria.compareTo(outraCategoria.nomeCategoria);
     }
 }
