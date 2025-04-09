@@ -138,5 +138,11 @@ public class EmprestimoServiceImpl implements EmprestimoService {
         }
         emprestimoRepository.deleteById(id);
         }
+
+
+    @Override
+    public Emprestimo salvarEmprestimo(Emprestimo emprestimo) {
+        return emprestimoRepository.save(emprestimo);
     }
+}
 

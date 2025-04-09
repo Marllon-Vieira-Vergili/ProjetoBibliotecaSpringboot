@@ -1,7 +1,7 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.entityImplementations;
 
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.DTO.request.requestEntity.LivroRequest;
-import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Leitor;
+
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities.Livro;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.repository.LivroRepository;
 import com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.service.entityInterfaces.LivroService;
@@ -94,9 +94,19 @@ private LivroRepository livroRepository;
         Livro livroEncontrado = livroRepository.findById(id).orElseThrow(() ->
                 new NoSuchElementException("Nenhum livro encontrado com essa id!"));
 
+
         //Alterar os dados do livro
         livroEncontrado.setTitulo(livroRequest.titulo());
         livroEncontrado.setAnoLancamento(livroRequest.anoLancamento());
+
+        //Verificar se os dados digitados do livro são válidos
+        if (livroRequest.titulo() == null || livroRequest.titulo().isEmpty() || !livroRequest.titulo().matches("[A-Za-z0-9\\s]+")) {
+            throw new IllegalArgumentException("O título do livro não pode ser nulo, vazio, e só deve conter letras.");
+        }
+        if (livroRequest.anoLancamento() == null || livroRequest.anoLancamento() < 1900|| livroRequest.anoLancamento() >
+                java.time.Year.now().getValue()) {
+            throw new IllegalArgumentException("O ano de lançamento do livro deve ser entre 1900 ao ano atual.");
+        }
 
         //salvar o livro
         livroRepository.save(livroEncontrado);
@@ -109,5 +119,12 @@ private LivroRepository livroRepository;
             throw new NoSuchElementException("Nenhum livro encontrado com este ID!");
         }
         livroRepository.deleteById(id);
+    }
+
+
+
+    //Método salvar livro(chamada em outros metodos)
+    public Livro salvarLivro(Livro livro){
+        return livroRepository.save(livro);
     }
 }

@@ -16,4 +16,6 @@ public interface LivroRepository extends JpaRepository<Livro,Integer> {
     @Query("SELECT l FROM Livro l WHERE l.titulo = :titulo")
     List<Livro> findByTitulo(@Param(value= "titulo") String titulo); //e se eu tiver mais de um livro com o mesmo nome? vai virar lista...
 
+
+
 }

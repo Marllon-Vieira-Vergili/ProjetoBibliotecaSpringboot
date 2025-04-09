@@ -50,26 +50,17 @@ public class Leitor {
     private Integer idade;
 
     //muitos leitores podem ter muitos livros
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH,
-            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(name = "leitor_com_livro", joinColumns = @JoinColumn(name = "leitor_id", referencedColumnName = "id"),
             foreignKey = @ForeignKey(name = "fk_leitor_id"), inverseJoinColumns =
     @JoinColumn(name = "livro_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_livro_id")))
     private List<Livro> listaLivrosRelacionadosAoLeitor = new ArrayList<>();
 
     //muitos leitores podem ter muitos empréstimos
-@ManyToMany(fetch = FetchType.EAGER, mappedBy = "listaLeitoresComEmprestimos")
-@Cascade({org.hibernate.annotations.CascadeType.DETACH, org.hibernate.annotations.CascadeType.MERGE,
-        org.hibernate.annotations.CascadeType.PERSIST, org.hibernate.annotations.CascadeType.REFRESH})
+@ManyToMany(fetch = FetchType.LAZY, mappedBy = "listaLeitoresComEmprestimos")
+@Cascade({org.hibernate.annotations.CascadeType.ALL})
     private List<Emprestimo> listaEmprestimosRelacionadosAoLeitor = new ArrayList<>();
 
-
-    public Leitor(String nome, String sobrenome, String email, Integer idade) {
-        this.nome = nome;
-        this.sobrenome = sobrenome;
-        this.email = email;
-        this.idade = idade;
-    }
 
 
       /*LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, LEITOR E LIVRO, LEITOR E EMPRESTIMO)*/

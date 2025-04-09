@@ -24,4 +24,8 @@ public interface EmprestimoService {
 
     //Remover
     void deletarEmprestimo(Integer id);
+
+
+    //Salvar emprestimo(associacao bidirecional em outras entidades)
+    Emprestimo salvarEmprestimo(Emprestimo emprestimo);
 }

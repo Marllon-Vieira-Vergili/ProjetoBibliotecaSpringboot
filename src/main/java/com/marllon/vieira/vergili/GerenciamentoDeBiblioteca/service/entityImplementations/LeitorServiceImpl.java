@@ -156,5 +156,11 @@ public class LeitorServiceImpl implements LeitorService {
             }
         leitorRepository.deleteById(id);
         }
+
+
+    @Override
+    public Leitor salvarLeitor(Leitor leitor) {
+        return leitorRepository.save(leitor);
     }
+}
 

@@ -1,10 +1,12 @@
 package com.marllon.vieira.vergili.GerenciamentoDeBiblioteca.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
 
 import java.util.*;
@@ -14,8 +16,7 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Categoria implements Comparable<Categoria>{
-
+public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,18 +24,16 @@ public class Categoria implements Comparable<Categoria>{
     private Integer id;
 
     @Column(name = "nome_categoria")
-    @NotNull
+    @NotNull(message = "Nome categoria não pode ser nulo!")
+    @NotBlank(message = "Não pode ficar em branco!")
     private String nomeCategoria;
 
     //muitas categorias podem ter muitos livros, ordenados em sequência pela sua categoria
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "listaLivrosComCategoria")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "listaLivrosComCategoria", cascade = {CascadeType.DETACH,
+            CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JsonBackReference
     private List<Livro> listaLivrosRelacionados = new ArrayList<>();
 
-    //Construtor padrão para categoria
-    public Categoria(String nomeCategoria) {
-        this.nomeCategoria = nomeCategoria;
-    }
 
     //LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, CATEGORIA COM LIVROS)
 
@@ -80,12 +79,8 @@ public class Categoria implements Comparable<Categoria>{
     //Comparar se os dois objetos serão iguais, com o mesmo código hash
     @Override
     public int hashCode() {
-        return 0;
+        return Objects.hash(id,nomeCategoria);
     }
 
-    //Comparar as categorias
-    @Override
-    public int compareTo(Categoria outraCategoria) {
-        return this.nomeCategoria.compareTo(outraCategoria.nomeCategoria);
-    }
+
 }

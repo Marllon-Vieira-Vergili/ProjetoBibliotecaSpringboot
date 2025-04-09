@@ -59,12 +59,6 @@ public class Autor {
     @JsonManagedReference
     private List<Livro> listaLivrosDosAutores = new ArrayList<>();
 
-    public Autor(String nome, String email, String telefone, String cidade) {
-        this.nome = nome;
-        this.email = email;
-        this.telefone = telefone;
-        this.cidade = cidade;
-    }
 
 
     //LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, AUTOR E LIVRO)

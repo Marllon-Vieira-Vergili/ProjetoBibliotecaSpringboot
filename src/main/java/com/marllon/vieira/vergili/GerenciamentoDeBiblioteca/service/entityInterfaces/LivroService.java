@@ -20,4 +20,8 @@ public interface LivroService {
     //Remover
     void deletarLivro(Integer id);
 
+
+    //Salvar livro
+    //Salvar um livro(chamada em outros métodos)
+    Livro salvarLivro (Livro livro);
 }

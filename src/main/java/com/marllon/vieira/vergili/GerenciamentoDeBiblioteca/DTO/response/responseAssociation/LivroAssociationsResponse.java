@@ -10,9 +10,10 @@ import java.util.List;
 //Muitas categorias para um livro associado,
 //Muitos emprestimos para muitos livros,
 //Muitos leitores para muitos livros
+//Para os métodos do livro, respostas
 public record LivroAssociationsResponse(List<LivroResponse> ListaLivros,
                                         AutorResponse AutorResponsavel,
-                                        CategoriaResponse Categoria,
-                                        EmprestimoResponse EmprestimoAssociado,
-                                        LeitorResponse LeitorAssociado) {
+                                        List<CategoriaResponse> Categorias,
+                                        List<EmprestimoResponse> EmprestimosAssociados,
+                                        List<LeitorResponse> LeitoresAssociados) {
 }

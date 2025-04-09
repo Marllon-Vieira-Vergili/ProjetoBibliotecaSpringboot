@@ -66,14 +66,6 @@ public class Livro {
 
 
 
-    public Livro(String titulo, Integer anoLancamento) {
-        this.titulo = titulo;
-        this.anoLancamento = anoLancamento;
-
-    }
-
-
-
     /*LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, AUTOR E LIVRO, LIVRO E CATEGORIAS, LIVRO E EMPRÈSTIMO,
      LIVRO E LEITOR)*/
 

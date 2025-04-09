@@ -18,7 +18,7 @@ public interface CategoriaService {
 
     //Ler
     Categoria encontrarCategoriaPorId(Integer id);
-    TreeSet<Categoria> encontrarTodasCategorias();
+    List<Categoria> encontrarTodasCategorias();
     Categoria encontraCategoriaPorNome(String nome);
 
     //Atualizar
@@ -26,6 +26,10 @@ public interface CategoriaService {
 
     //Remover
     void deletarCategoria(Integer id);
+
+
+    //Salvar uma categoria(metodo para uso em outras entidades)
+    Categoria salvarCategoria(Categoria categoriaId);
 }
 
 

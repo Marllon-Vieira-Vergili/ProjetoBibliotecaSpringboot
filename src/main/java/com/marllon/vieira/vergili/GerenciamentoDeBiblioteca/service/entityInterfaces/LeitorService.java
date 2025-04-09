@@ -22,4 +22,8 @@ public interface LeitorService {
 
     //Remover
     void deletarLeitor(Integer id);
+
+
+    //Salvar leitor(para uso em método bidirecional)
+    Leitor salvarLeitor(Leitor leitor);
 }

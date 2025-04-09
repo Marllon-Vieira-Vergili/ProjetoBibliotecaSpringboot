@@ -51,13 +51,6 @@ public class Emprestimo {
 
 
 
-
-    public Emprestimo(LocalDate dataEmprestimo, LocalDate dataDevolucao) {
-        this.dataEmprestimo = dataEmprestimo;
-        this.dataDevolucao = dataDevolucao;
-
-    }
-
       /*LÒGICAS DE ASSOCIAÇÂO COM OUTRAS ENTIDADES (NO CASO, EMPRESTIMO A LIVRO, E EMPRESTIMO A LEITOR)*/
 
 

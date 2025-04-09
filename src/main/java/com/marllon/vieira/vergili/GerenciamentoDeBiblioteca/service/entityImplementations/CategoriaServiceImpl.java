@@ -24,7 +24,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
         //Criar nova Categoria
         Categoria novaCategoria = new Categoria();
-        novaCategoria.setNomeCategoria(categoriaRequest.nomeCategoria().toUpperCase());
+        novaCategoria.setNomeCategoria(categoriaRequest.categoria().toUpperCase());
 
         //Verificar se o usuário digitou os valores certos para criação da categoria
         if(novaCategoria.getNomeCategoria().isBlank() || !novaCategoria.getNomeCategoria().matches("[a-zA-ZÀ-ÿ\\s]+")){
@@ -40,7 +40,7 @@ public class CategoriaServiceImpl implements CategoriaService {
             } else if (categoriasPercorridas.getNomeCategoria().isEmpty()) {
                 //Se for a primeira categoria criada, vamos adicioná-la em um nova lista
                 Categoria primeiraCategoria = new Categoria();
-                primeiraCategoria.setNomeCategoria(categoriaRequest.nomeCategoria());
+                primeiraCategoria.setNomeCategoria(categoriaRequest.categoria());
 
                 //Salvar esse primeiro valor da nova categoria
                 categoriaRepository.save(primeiraCategoria);
@@ -61,7 +61,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
-    public TreeSet<Categoria> encontrarTodasCategorias() {
+    public List<Categoria> encontrarTodasCategorias() {
 //treeset requer que a classe categoria implemente a interface Comparable, para comparar se tiver com os mesmos nomes
         //Instanciar uma lista de categorias
         List<Categoria> categorias = categoriaRepository.findAll();
@@ -69,7 +69,7 @@ public class CategoriaServiceImpl implements CategoriaService {
             throw new NoSuchElementException("Nenhuma Categoria encontrada no Banco de dados!");
         }
         //retornar em uma lista ordenada alfabeticamente(pelo treeset)
-        return new TreeSet<>(categorias);
+        return categorias;
 
     }
 
@@ -88,7 +88,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
         Categoria categoriaEncontrada = categoriaRepository.findById(id).orElseThrow(() -> new
                 NoSuchElementException("Nenhuma categoria encontrada no banco de dados com essa id!"));
-        categoriaEncontrada.setNomeCategoria(categoriaRequest.nomeCategoria().toUpperCase());
+        categoriaEncontrada.setNomeCategoria(categoriaRequest.categoria().toUpperCase());
 
         //Verificar se os novos dados serão válidos
         if(categoriaEncontrada.getNomeCategoria().isBlank() || !categoriaEncontrada.getNomeCategoria().matches("[a-zA-ZÀ-ÿ\\s]+")){
@@ -107,5 +107,10 @@ public class CategoriaServiceImpl implements CategoriaService {
             throw new NoSuchElementException("Nenhuma categoria encontrada com essa ID no banco de dados!");
         }
         categoriaRepository.deleteById(id);
+    }
+
+    @Override
+    public Categoria salvarCategoria(Categoria categoriaId) {
+        return categoriaRepository.save(categoriaId);
     }
 }
